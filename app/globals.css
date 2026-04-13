@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/* ── NGH Property Group — Brand Tokens ── */
+@theme {
+  --color-cream: #F5F3EE;
+  --color-charcoal: #1F1F1F;
+  --color-sand: #C8B9A6;
+  --color-olive: #8A8F83;
+  --color-gold: #C6A96C;
+  --color-gold-light: #D4AF6A;
+
+  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Inter', sans-serif;
+}
+
+/* ── Base ── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-cream);
+  color: var(--color-charcoal);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Selection ── */
+::selection {
+  background-color: var(--color-gold);
+  color: var(--color-cream);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-cream);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-light);
+}
+
+/* ── Word Break Protection (headings) ── */
+h1, h2, h3, h4, h5, h6 {
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+
+/* ── Luxury Typography ── */
+h1, h2, h3 {
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* ── Luxury Easing ── */
+:root {
+  --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-gentle: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ── Extra small mobile cards ── */
+@media (max-width: 480px) {
+  [data-ngh-card] {
+    min-height: 45vh !important;
+    top: 50px !important;
+  }
+}
+
+/* ── Stacked Deck ── */
+.stack-wrap {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.stack-card {
+  position: sticky;
+  top: 80px;
+  min-height: 80vh;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
