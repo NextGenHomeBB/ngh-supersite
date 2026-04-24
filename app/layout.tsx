@@ -22,6 +22,24 @@ export const metadata: Metadata = {
   title: 'NGH Property Group — Real Estate Development in Bali',
   description:
     'Premium real estate development in Bali. Luxury villas, exclusive investments, and world-class property management by NGH Property Group.',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+  openGraph: {
+    title: 'NGH Property Group — Real Estate Development in Bali',
+    description: 'Premium real estate development in Bali. Dutch standards, turnkey delivery, 15% expected ROI. Luxury apartments starting from EUR 112,500.',
+    url: 'https://nghpropertygroup.com',
+    siteName: 'NGH Property Group',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NGH Property Group — Real Estate Development in Bali',
+    description: 'Premium real estate development in Bali. Dutch standards, turnkey delivery, 15% expected ROI.',
+    images: ['/og-image.jpg'],
+  },
 }
 
 export default function RootLayout({
