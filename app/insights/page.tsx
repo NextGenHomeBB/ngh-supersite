@@ -19,7 +19,7 @@ const articles = [
   {
     title: 'Balangan Beach: One of the Most Beautiful Beaches Near Uluwatu Paradise',
     category: 'Lifestyle',
-    image: '/images/content-08.jpg',
+    image: '/images/balangan-beach-cover.jpg',
     date: 'March 29, 2026',
     href: '/insights/balangan-beach',
     excerpt: 'Tucked along the limestone cliffs of Bali\'s Bukit Peninsula, Balangan Beach is one of those rare places that still feels untouched by mass tourism — and it\'s just minutes from Uluwatu Paradise.',

@@ -800,7 +800,7 @@ export default function ScrollExperience() {
     {
       title: 'Balangan Beach: One of the Most Beautiful Beaches Near Uluwatu Paradise',
       category: 'Lifestyle',
-      image: '/images/content-08.jpg',
+      image: '/images/balangan-beach-cover.jpg',
       date: 'March 29, 2026',
       href: '/insights/balangan-beach',
     },

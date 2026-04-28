@@ -13,7 +13,7 @@ export default function BalanganBeach() {
       {/* Hero */}
       <div className="relative h-[60vh] md:h-[70vh]">
         <Image
-          src="/images/content-08.jpg"
+          src="/images/balangan-beach-cover.jpg"
           alt="Balangan Beach Bali"
           fill
           className="object-cover"
