@@ -1637,7 +1637,7 @@ export default function ScrollExperience() {
           <FadeIn delay={0.3}>
             <div className="text-center">
               <a
-                href="/investor-guide"
+                href="/bali-guide"
                 className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full text-sm font-medium tracking-[0.1em] uppercase transition-all duration-300 hover:scale-105"
                 style={{
                   backgroundColor: '#C6A96C',
