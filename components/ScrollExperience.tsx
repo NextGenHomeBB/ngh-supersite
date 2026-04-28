@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState, useCallback, type CSSProperties } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import AnimText from './AnimText';
 import NGHLogoSVG from './NGHLogoSVG';
 import { useInView } from './useInView';
@@ -794,18 +795,21 @@ export default function ScrollExperience() {
       category: 'Development',
       image: '/images/content-07.jpg',
       date: 'April 1, 2026',
+      href: '/blog/uluwatu-paradise-development',
     },
     {
       title: 'Balangan Beach: One of the Most Beautiful Beaches Near Uluwatu Paradise',
       category: 'Lifestyle',
       image: '/images/content-08.jpg',
       date: 'March 29, 2026',
+      href: '/blog/balangan-beach',
     },
     {
       title: 'Cafes and Restaurants Near Uluwatu Paradise',
       category: 'Area Guide',
       image: '/images/content-09.jpg',
       date: 'March 23, 2026',
+      href: '/blog/cafes-restaurants-uluwatu',
     },
   ];
 
@@ -1502,39 +1506,41 @@ export default function ScrollExperience() {
           <div className="grid md:grid-cols-3 gap-8">
             {blogCards.map((card, i) => (
               <FadeIn key={card.title} delay={i * 0.15}>
-                <article className="group cursor-pointer">
-                  <div className="relative h-56 md:h-64 rounded-xl overflow-hidden mb-6">
-                    <Image
-                      src={card.image}
-                      alt={card.title}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                    />
-                    <div
-                      className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-0"
-                      style={{ backgroundColor: 'rgba(31,31,31,0.2)' }}
-                    />
-                  </div>
-                  <span
-                    className="text-xs tracking-[0.2em] uppercase mb-3 block"
-                    style={{ color: '#C6A96C' }}
-                  >
-                    {card.category}
-                  </span>
-                  <h3
-                    className="text-lg md:text-xl font-light leading-snug mb-2 transition-colors duration-300"
-                    style={{
-                      fontFamily: 'var(--font-serif)',
-                      color: '#F5F3EE',
-                    }}
-                  >
-                    {card.title}
-                  </h3>
-                  <span className="text-xs" style={{ color: '#8A8F83' }}>
-                    {card.date}
-                  </span>
-                </article>
+                <Link href={card.href}>
+                  <article className="group cursor-pointer">
+                    <div className="relative h-56 md:h-64 rounded-xl overflow-hidden mb-6">
+                      <Image
+                        src={card.image}
+                        alt={card.title}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
+                      <div
+                        className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-0"
+                        style={{ backgroundColor: 'rgba(31,31,31,0.2)' }}
+                      />
+                    </div>
+                    <span
+                      className="text-xs tracking-[0.2em] uppercase mb-3 block"
+                      style={{ color: '#C6A96C' }}
+                    >
+                      {card.category}
+                    </span>
+                    <h3
+                      className="text-lg md:text-xl font-light leading-snug mb-2 transition-colors duration-300"
+                      style={{
+                        fontFamily: 'var(--font-serif)',
+                        color: '#F5F3EE',
+                      }}
+                    >
+                      {card.title}
+                    </h3>
+                    <span className="text-xs" style={{ color: '#8A8F83' }}>
+                      {card.date}
+                    </span>
+                  </article>
+                </Link>
               </FadeIn>
             ))}
           </div>
