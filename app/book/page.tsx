@@ -1,9 +1,20 @@
 'use client';
 
-import { useEffect } from 'react';
-import Script from 'next/script';
+import { useEffect, useRef } from 'react';
 
 export default function BookPage() {
+  const calendlyLoaded = useRef(false);
+
+  useEffect(() => {
+    if (calendlyLoaded.current) return;
+    calendlyLoaded.current = true;
+
+    const script = document.createElement('script');
+    script.src = 'https://assets.calendly.com/assets/external/widget.js';
+    script.async = true;
+    document.head.appendChild(script);
+  }, []);
+
   return (
     <main
       style={{
@@ -252,10 +263,6 @@ export default function BookPage() {
             borderRadius: 12,
             overflow: 'hidden',
           }}
-        />
-        <Script
-          src="https://assets.calendly.com/assets/external/widget.js"
-          strategy="lazyOnload"
         />
 
         {/* Bottom CTA */}
