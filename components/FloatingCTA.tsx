@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-const WHATSAPP_URL = 'https://wa.me/6285190520175';
+const WHATSAPP_URL = 'https://api.whatsapp.com/send/?phone=6285190520175';
 const PHONE_URL = 'tel:+6285190520175';
 const SCROLL_THRESHOLD = 120;
 
