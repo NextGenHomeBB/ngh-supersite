@@ -14,13 +14,16 @@ const NAV_LINKS = [
 ];
 
 export default function Navigation() {
-  const [scrolled, setScrolled] = useState(false);
-  const [navVisible, setNavVisible] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('hero');
   const pathname = usePathname();
   const router = useRouter();
   const isHomePage = pathname === '/';
+
+  // On non-home pages (insight articles etc.), nav must be visible immediately —
+  // including in the server-rendered HTML — so we initialize based on pathname.
+  const [scrolled, setScrolled] = useState(!isHomePage);
+  const [navVisible, setNavVisible] = useState(!isHomePage);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('hero');
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -35,7 +38,7 @@ export default function Navigation() {
     };
 
     if (!isHomePage) {
-      // On non-home pages, always show the nav immediately
+      // Ensure nav is visible on non-home pages (safety net for client-side nav)
       setNavVisible(true);
       setScrolled(true);
     } else {
