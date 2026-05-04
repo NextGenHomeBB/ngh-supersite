@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
@@ -17,6 +18,9 @@ export default function Navigation() {
   const [navVisible, setNavVisible] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const pathname = usePathname();
+  const router = useRouter();
+  const isHomePage = pathname === '/';
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -24,15 +28,23 @@ export default function Navigation() {
     const handleScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 60);
-      // Only show nav after user has scrolled past the logo intro (~300px)
-      setNavVisible(y > 280);
+      if (isHomePage) {
+        // Only show nav after user has scrolled past the logo intro (~300px)
+        setNavVisible(y > 280);
+      }
     };
 
-    // Check on mount too
-    setNavVisible(window.scrollY > 280);
+    if (!isHomePage) {
+      // On non-home pages, always show the nav immediately
+      setNavVisible(true);
+      setScrolled(true);
+    } else {
+      // Check on mount too
+      setNavVisible(window.scrollY > 280);
+    }
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isHomePage]);
 
   // Track active section via IntersectionObserver
   useEffect(() => {
@@ -66,12 +78,19 @@ export default function Navigation() {
       e.preventDefault();
       setMobileOpen(false);
       const id = href.replace('#', '');
+
+      if (!isHomePage) {
+        // Navigate to homepage with the anchor hash
+        router.push('/' + href);
+        return;
+      }
+
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     },
-    []
+    [isHomePage, router]
   );
 
   // Lock body scroll when mobile menu is open
