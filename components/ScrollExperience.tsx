@@ -1549,7 +1549,7 @@ export default function ScrollExperience() {
 
       {/* ── INVESTOR GUIDE ── */}
       <section
-        id="investor-guide"
+        id="bali-guide"
         className="py-24 md:py-32 px-6 lg:px-8"
         style={{ backgroundColor: '#F5F3EE' }}
       >
@@ -1925,6 +1925,6 @@ const NAV_LINKS_FOOTER = [
   { label: 'Opportunities', href: '#opportunities' },
   { label: 'Our Edge', href: '#our-edge' },
   { label: 'Insights', href: '#insights' },
-  { label: 'Bali Guide', href: '#investor-guide' },
+  { label: 'Bali Guide', href: '#bali-guide' },
   { label: 'Contact', href: '#contact' },
 ];

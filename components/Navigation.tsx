@@ -10,7 +10,7 @@ const NAV_LINKS = [
   { label: 'OPPORTUNITIES', href: '#opportunities' },
   { label: 'OUR EDGE', href: '#our-edge' },
   { label: 'INSIGHTS', href: '#insights' },
-  { label: 'BALI GUIDE', href: '#investor-guide' },
+  { label: 'BALI GUIDE', href: '#bali-guide' },
 ];
 
 export default function Navigation() {
