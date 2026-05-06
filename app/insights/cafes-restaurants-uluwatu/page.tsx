@@ -5,6 +5,15 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Cafes and Restaurants Near Uluwatu Paradise — NGH Property Group',
   description: 'Discover the best cafes, restaurants, beach clubs, and wellness spots near Uluwatu Paradise. From specialty coffee to clifftop dining, explore the Uluwatu lifestyle.',
+  openGraph: {
+    title: 'Cafes and Restaurants Near Uluwatu Paradise',
+    description: 'Discover the best cafes, restaurants, beach clubs, and wellness spots near Uluwatu Paradise. From specialty coffee to clifftop dining, explore the Uluwatu lifestyle.',
+    images: [{ url: '/images/content-09.jpg', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/images/content-09.jpg'],
+  },
 }
 
 export default function CafesRestaurantsUluwatu() {

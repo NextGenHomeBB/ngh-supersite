@@ -5,6 +5,15 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Balangan Beach: One of the Most Beautiful Beaches Near Uluwatu Paradise — NGH Property Group',
   description: 'Discover Balangan Beach, one of Bali\'s most stunning coastlines and just minutes from Uluwatu Paradise. Crystal-clear waters, dramatic cliffs, and golden sand.',
+  openGraph: {
+    title: 'Balangan Beach: One of the Most Beautiful Beaches Near Uluwatu Paradise',
+    description: 'Discover Balangan Beach, one of Bali\'s most stunning coastlines and just minutes from Uluwatu Paradise. Crystal-clear waters, dramatic cliffs, and golden sand.',
+    images: [{ url: '/images/balangan-beach-cover.jpg', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/images/balangan-beach-cover.jpg'],
+  },
 }
 
 export default function BalanganBeach() {

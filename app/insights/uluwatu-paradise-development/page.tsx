@@ -5,6 +5,15 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Uluwatu Paradise: A Thoughtfully Designed Development in South Bali — NGH Property Group',
   description: '24 full-service apartments featuring a private gym, sauna, co-working space, and shared rooftop with ocean views. Built on Dutch construction standards in Bali\'s most desirable location.',
+  openGraph: {
+    title: 'Uluwatu Paradise: A Thoughtfully Designed Development in South Bali',
+    description: '24 full-service apartments featuring a private gym, sauna, co-working space, and shared rooftop with ocean views. Built on Dutch construction standards in Bali\'s most desirable location.',
+    images: [{ url: '/images/content-07.jpg', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/images/content-07.jpg'],
+  },
 }
 
 export default function UluwatuParadiseDevelopment() {
