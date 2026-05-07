@@ -4,10 +4,18 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Insights — NGH Property Group',
-  description: 'Articles, guides, and updates about Bali real estate, the Uluwatu lifestyle, and investment opportunities from NGH Property Group.',
+  description: 'Expert insights on Bali property investment — market trends, ROI analysis, ownership structures, and opportunities in South Bali\'s fastest-growing luxury market.',
 }
 
 const articles = [
+  {
+    title: 'Bali\'s New Special Economic Zone (KEK) — What It Means for Property Investors',
+    category: 'Market Insights',
+    image: '/images/kek-hero-v2.jpg',
+    date: 'May 1, 2026',
+    href: '/insights/bali-kek-special-economic-zone',
+    excerpt: 'Indonesia announces Bali as a Special Economic Zone for Family Offices. Learn what this means for foreign property investors, tax incentives, and the future of Bali real estate.',
+  },
   {
     title: 'Uluwatu Paradise: A Thoughtfully Designed Development in South Bali',
     category: 'Development',
@@ -48,7 +56,7 @@ export default function InsightsPage() {
             Insights
           </h1>
           <p className="text-lg font-light max-w-2xl" style={{ color: '#8A8F83' }}>
-            Articles, guides, and updates about Bali real estate, the Uluwatu lifestyle, and investment opportunities.
+            Expert insights on Bali property investment — market trends, ROI analysis, ownership structures, and opportunities in South Bali&apos;s fastest-growing luxury market.
           </p>
         </div>
       </div>

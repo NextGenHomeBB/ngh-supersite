@@ -122,12 +122,12 @@ function MarqueeStrip({ items }: { items: { name: string; logo: string }[] }) {
   const doubled = [...items, ...items];
 
   return (
-    <div className="overflow-hidden py-12" style={{ backgroundColor: '#1F1F1F' }}>
+    <div className="overflow-hidden py-12" style={{ backgroundColor: '#F5F0E8' }}>
       <div className="flex animate-marquee">
         {doubled.map((item, i) => (
           <div
             key={`${item.name}-${i}`}
-            className="flex-shrink-0 mx-8 md:mx-12 flex items-center justify-center h-16 w-32 md:w-40 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0"
+            className="flex-shrink-0 mx-8 md:mx-12 flex items-center justify-center h-16 w-32 md:w-40 opacity-60 hover:opacity-100 transition-opacity duration-300"
           >
             <Image
               src={item.logo}
@@ -791,6 +791,13 @@ export default function ScrollExperience() {
   // Blog cards
   const blogCards = [
     {
+      title: 'Bali\'s New Special Economic Zone (KEK) — What It Means for Property Investors',
+      category: 'Market Insights',
+      image: '/images/kek-hero-v2.jpg',
+      date: 'May 1, 2026',
+      href: '/insights/bali-kek-special-economic-zone',
+    },
+    {
       title: 'Uluwatu Paradise: A Thoughtfully Designed Development in South Bali',
       category: 'Development',
       image: '/images/content-07.jpg',
@@ -803,13 +810,6 @@ export default function ScrollExperience() {
       image: '/images/balangan-beach-cover.jpg',
       date: 'March 29, 2026',
       href: '/insights/balangan-beach',
-    },
-    {
-      title: 'Cafes and Restaurants Near Uluwatu Paradise',
-      category: 'Area Guide',
-      image: '/images/content-09.jpg',
-      date: 'March 23, 2026',
-      href: '/insights/cafes-restaurants-uluwatu',
     },
   ];
 
