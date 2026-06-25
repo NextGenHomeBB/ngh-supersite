@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { Playfair_Display, Inter } from 'next/font/google'
 import Navigation from '@/components/Navigation'
 import ScrollProgress from '@/components/ScrollProgress'
-import CursorFollower from '@/components/CursorFollower'
 import FloatingCTA from '@/components/FloatingCTA'
 import './globals.css'
 
@@ -54,7 +53,6 @@ export default function RootLayout({
       </head>
       <body>
         <ScrollProgress />
-        <CursorFollower />
         <Navigation />
         {children}
         <FloatingCTA />
