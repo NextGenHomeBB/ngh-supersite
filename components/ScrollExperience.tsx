@@ -1192,7 +1192,7 @@ export default function ScrollExperience() {
                   src="/images/discover-hero.jpg"
                   alt="Discover NGH Property Group"
                   fill
-                  className="object-cover"
+                  className="object-cover object-center"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
                 <div
