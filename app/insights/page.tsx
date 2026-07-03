@@ -9,6 +9,14 @@ export const metadata: Metadata = {
 
 const articles = [
   {
+    title: 'What Bali\'s Busiest Month Tells Property Investors',
+    category: 'Market Insights',
+    image: '/images/bali-busiest-month-investors.png',
+    date: 'July 3, 2026',
+    href: '/insights/what-balis-busiest-month-tells-property-investors',
+    excerpt: 'Every July, Bali offers more than full flights and fully booked villas. Learn what peak season reveals about long-term property demand for investors.',
+  },
+  {
     title: 'Bali\'s New Special Economic Zone (KEK) — What It Means for Property Investors',
     category: 'Market Insights',
     image: '/images/kek-hero-v2.jpg',
