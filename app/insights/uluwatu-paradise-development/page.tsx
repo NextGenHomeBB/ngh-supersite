@@ -1,20 +1,16 @@
-import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { makeInsightMetadata } from '../metadata'
 
-export const metadata: Metadata = {
-  title: 'Uluwatu Paradise: A Thoughtfully Designed Development in South Bali — NGH Property Group',
+export const metadata = makeInsightMetadata({
+  title: 'Uluwatu Paradise: A Thoughtfully Designed Development in South Bali',
+  pageTitle: 'Uluwatu Paradise: A Thoughtfully Designed Development in South Bali — NGH Property Group',
   description: '24 full-service apartments featuring a private gym, sauna, co-working space, and shared rooftop with ocean views. Built on Dutch construction standards in Bali\'s most desirable location.',
-  openGraph: {
-    title: 'Uluwatu Paradise: A Thoughtfully Designed Development in South Bali',
-    description: '24 full-service apartments featuring a private gym, sauna, co-working space, and shared rooftop with ocean views. Built on Dutch construction standards in Bali\'s most desirable location.',
-    images: [{ url: '/images/content-07.jpg', width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    images: ['/images/content-07.jpg'],
-  },
-}
+  path: '/insights/uluwatu-paradise-development',
+  image: '/images/uluwatu-paradise-development-og.jpg',
+  imageAlt: 'Uluwatu Paradise development in South Bali',
+  publishedTime: '2026-04-01T00:00:00+08:00',
+})
 
 export default function UluwatuParadiseDevelopment() {
   return (
