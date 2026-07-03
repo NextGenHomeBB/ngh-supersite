@@ -791,6 +791,13 @@ export default function ScrollExperience() {
   // Blog cards
   const blogCards = [
     {
+      title: 'What Bali\'s Busiest Month Tells Property Investors',
+      category: 'Market Insights',
+      image: '/images/bali-busiest-month-investors.png',
+      date: 'July 3, 2026',
+      href: '/insights/what-balis-busiest-month-tells-property-investors',
+    },
+    {
       title: 'Bali\'s New Special Economic Zone (KEK) — What It Means for Property Investors',
       category: 'Market Insights',
       image: '/images/kek-hero-v2.jpg',
@@ -803,13 +810,6 @@ export default function ScrollExperience() {
       image: '/images/content-07.jpg',
       date: 'April 1, 2026',
       href: '/insights/uluwatu-paradise-development',
-    },
-    {
-      title: 'Balangan Beach: One of the Most Beautiful Beaches Near Uluwatu Paradise',
-      category: 'Lifestyle',
-      image: '/images/balangan-beach-cover.jpg',
-      date: 'March 29, 2026',
-      href: '/insights/balangan-beach',
     },
   ];
 
