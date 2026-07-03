@@ -1,44 +1,19 @@
-import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { makeInsightMetadata } from '../metadata'
 
 const heroImage = '/images/bali-busiest-month-investors.png'
-const ogImage = '/images/bali-busiest-month-investors-og.png'
-const articlePath = '/insights/what-balis-busiest-month-tells-property-investors'
 
-export const metadata: Metadata = {
-  title: "What Bali's Busiest Month Tells Property Investors | NGH Property Group",
+export const metadata = makeInsightMetadata({
+  title: "What Bali's Busiest Month Tells Property Investors",
   description:
-    "Every July, Bali offers more than full flights and fully booked villas. Learn what peak season reveals about long-term property demand for investors.",
-  alternates: {
-    canonical: articlePath,
-  },
-  openGraph: {
-    title: "What Bali's Busiest Month Tells Property Investors",
-    description:
-      "What Bali's busiest month reveals about lifestyle demand, location quality, scarcity, and long-term property fundamentals.",
-    url: articlePath,
-    siteName: 'NGH Property Group',
-    type: 'article',
-    publishedTime: '2026-07-03T00:00:00+08:00',
-    authors: ['Mitchell Kasiman'],
-    images: [
-      {
-        url: ogImage,
-        width: 1200,
-        height: 627,
-        alt: "What Bali's Busiest Month Tells Property Investors",
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: "What Bali's Busiest Month Tells Property Investors",
-    description:
-      "What Bali's busiest month reveals about lifestyle demand, location quality, scarcity, and long-term property fundamentals.",
-    images: [ogImage],
-  },
-}
+    "What Bali's busiest month reveals about lifestyle demand, location quality, scarcity, and long-term property fundamentals.",
+  path: '/insights/what-balis-busiest-month-tells-property-investors',
+  image: '/images/bali-busiest-month-investors-og.png',
+  imageAlt: "What Bali's Busiest Month Tells Property Investors",
+  publishedTime: '2026-07-03T00:00:00+08:00',
+  authors: ['Mitchell Kasiman'],
+})
 
 export default function BalisBusiestMonthArticle() {
   return (

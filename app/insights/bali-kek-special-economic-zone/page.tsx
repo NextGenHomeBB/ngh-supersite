@@ -1,20 +1,15 @@
-import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { makeInsightMetadata } from '../metadata'
 
-export const metadata: Metadata = {
-  title: 'Bali\'s New Special Economic Zone (KEK) — What It Means for Property Investors | NGH Property Group',
+export const metadata = makeInsightMetadata({
+  title: 'Bali\'s New Special Economic Zone (KEK) — What It Means for Property Investors',
   description: 'Indonesia announces Bali as a Special Economic Zone (KEK) for Family Offices. Learn what this means for foreign property investors, tax incentives, and the future of Bali real estate.',
-  openGraph: {
-    title: 'Bali\'s New Special Economic Zone (KEK) — What It Means for Property Investors',
-    description: 'Indonesia announces Bali as a Special Economic Zone (KEK) for Family Offices. Learn what this means for foreign property investors, tax incentives, and the future of Bali real estate.',
-    images: [{ url: '/images/kek-hero-v2.jpg', width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    images: ['/images/kek-hero-v2.jpg'],
-  },
-}
+  path: '/insights/bali-kek-special-economic-zone',
+  image: '/images/kek-hero-og.jpg',
+  imageAlt: 'Bali Special Economic Zone property investment insight',
+  publishedTime: '2026-05-01T00:00:00+08:00',
+})
 
 export default function BaliKEKArticle() {
   return (

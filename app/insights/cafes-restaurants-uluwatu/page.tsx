@@ -1,20 +1,16 @@
-import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { makeInsightMetadata } from '../metadata'
 
-export const metadata: Metadata = {
-  title: 'Cafes and Restaurants Near Uluwatu Paradise — NGH Property Group',
+export const metadata = makeInsightMetadata({
+  title: 'Cafes and Restaurants Near Uluwatu Paradise',
+  pageTitle: 'Cafes and Restaurants Near Uluwatu Paradise — NGH Property Group',
   description: 'Discover the best cafes, restaurants, beach clubs, and wellness spots near Uluwatu Paradise. From specialty coffee to clifftop dining, explore the Uluwatu lifestyle.',
-  openGraph: {
-    title: 'Cafes and Restaurants Near Uluwatu Paradise',
-    description: 'Discover the best cafes, restaurants, beach clubs, and wellness spots near Uluwatu Paradise. From specialty coffee to clifftop dining, explore the Uluwatu lifestyle.',
-    images: [{ url: '/images/content-09.jpg', width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    images: ['/images/content-09.jpg'],
-  },
-}
+  path: '/insights/cafes-restaurants-uluwatu',
+  image: '/images/cafes-restaurants-uluwatu-og.jpg',
+  imageAlt: 'Cafes and restaurants near Uluwatu Paradise',
+  publishedTime: '2026-04-08T00:00:00+08:00',
+})
 
 export default function CafesRestaurantsUluwatu() {
   const cafes = [
