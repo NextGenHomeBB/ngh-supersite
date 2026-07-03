@@ -18,6 +18,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://nghpropertygroup.com'),
   title: 'NGH Property Group — Real Estate Development in Bali',
   description:
     'Premium real estate development in Bali. Luxury villas, exclusive investments, and world-class property management by NGH Property Group.',
