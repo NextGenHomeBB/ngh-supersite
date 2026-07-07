@@ -25,7 +25,7 @@ const sections = [
   {
     title: 'Information we may process',
     body: [
-      'When you interact with NGH Property Group, Uluwatu Paradise, or our social media channels, we may process information that you choose to provide, such as your name, contact details, messages, inquiries, meeting requests, and preferences.',
+      'When you interact with NGH Property Group, Uluwatu Paradise, or our social media channels, we may process information that you choose to provide, such as your name, contact details, messages, inquiries, meeting requests, job application details, CV or resume, intro video, and preferences.',
       'Through platform integrations such as LinkedIn, we may receive limited profile, page, post, engagement, and analytics information according to the permissions approved by the relevant platform user or administrator.',
     ],
   },
@@ -34,6 +34,13 @@ const sections = [
     body: [
       'We use information to respond to inquiries, provide project information, manage appointments, prepare approved social media content, publish approved posts, review content performance, and improve our communication with investors, buyers, partners, and interested visitors.',
       'We do not sell personal data. We do not use LinkedIn or other social platform data for unrelated third-party advertising resale.',
+    ],
+  },
+  {
+    title: 'Recruitment applications',
+    body: [
+      'When you apply for a role, we use your application answers, contact details, CV or resume, and intro video only to review your fit, contact you about the application, and manage the recruitment process.',
+      'Application files are stored in private infrastructure and are not published. Access is limited to the recruitment team and approved operational systems needed to process the application.',
     ],
   },
   {
@@ -53,7 +60,8 @@ const sections = [
   {
     title: 'Retention',
     body: [
-      'We keep information only for as long as reasonably necessary for the purposes described in this policy, unless a longer retention period is required for legal, accounting, security, or legitimate business reasons.',
+      'We keep general information only for as long as reasonably necessary for the purposes described in this policy, unless a longer retention period is required for legal, accounting, security, or legitimate business reasons.',
+      'For recruitment applications submitted through our careers form, we delete the application package, including CV or resume, intro video, metadata, and upload session data, within 28 days after the role is filled or closed.',
     ],
   },
   {

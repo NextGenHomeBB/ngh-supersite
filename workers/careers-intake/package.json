@@ -1,0 +1,18 @@
+{
+  "name": "@ngh/careers-intake-worker",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "vitest run",
+    "dev": "wrangler dev src/index.ts --local",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260701.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.0",
+    "wrangler": "^4.0.0"
+  }
+}
