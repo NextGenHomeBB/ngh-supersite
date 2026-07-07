@@ -1,0 +1,8 @@
+name = "ngh-www-apex-redirect"
+main = "src/index.ts"
+account_id = "a3a78706de8e8c0689049a3a62a3a036"
+compatibility_date = "2026-07-01"
+
+[[routes]]
+pattern = "www.nghpropertygroup.com/*"
+zone_name = "nghpropertygroup.com"
