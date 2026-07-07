@@ -1,0 +1,18 @@
+name = "ngh-careers-intake-dev"
+main = "src/index.ts"
+account_id = "a3a78706de8e8c0689049a3a62a3a036"
+compatibility_date = "2026-07-01"
+
+[vars]
+CORS_ORIGIN = "https://nghpropertygroup.com"
+R2_BUCKET_NAME = "ngh-careers-applications-dev"
+R2_S3_ENDPOINT = "https://a3a78706de8e8c0689049a3a62a3a036.eu.r2.cloudflarestorage.com"
+TURNSTILE_TEST_MODE = "true"
+
+[[r2_buckets]]
+binding = "CAREERS_BUCKET"
+bucket_name = "ngh-careers-applications-dev"
+jurisdiction = "eu"
+
+[triggers]
+crons = ["0 2 * * *"]
