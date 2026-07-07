@@ -25,8 +25,8 @@ declare global {
   }
 }
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_CAREERS_API_BASE_URL || 'https://ngh-careers-intake-dev.mitchell-kasiman.workers.dev'
-const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'
+const apiBaseUrl = process.env.NEXT_PUBLIC_CAREERS_API_BASE_URL || 'https://apply.nghpropertygroup.com'
+const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAADxWtmNSBt1hDWg6'
 
 function groupQuestions(questions: CareerQuestion[]) {
   return questions.reduce<Record<string, CareerQuestion[]>>((groups, question) => {
