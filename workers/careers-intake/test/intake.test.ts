@@ -250,14 +250,16 @@ describe('intake Worker hardening', () => {
 
     const telegram = calls.find((call) => call.url.includes('api.telegram.org'))?.body as { text: string }
     expect(telegram.text).toContain('New application for Operations & Planning Manager')
-    expect(telegram.text).toContain('Name: Jane Candidate')
-    expect(telegram.text).toContain('Email: jane@example.com')
-    expect(telegram.text).toContain('Phone: +62 812')
     expect(telegram.text).toContain(`Application ID: ${appId}`)
-    expect(telegram.text).toContain('CV: yes')
-    expect(telegram.text).toContain('Intro video: yes')
     expect(telegram.text).toContain(`CV link: https://apply.nghpropertygroup.com/applicants/${appId}/cv`)
     expect(telegram.text).toContain(`Video link: https://apply.nghpropertygroup.com/applicants/${appId}/video`)
+    expect(telegram.text).not.toContain('Jane Candidate')
+    expect(telegram.text).not.toContain('jane@example.com')
+    expect(telegram.text).not.toContain('+62 812')
+    expect(telegram.text).not.toContain('Name:')
+    expect(telegram.text).not.toContain('Email:')
+    expect(telegram.text).not.toContain('Phone:')
+    expect(telegram.text).not.toContain('Submitted:')
   })
 
   it('streams private CV and video objects through durable applicant routes', async () => {
