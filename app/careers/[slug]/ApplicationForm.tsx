@@ -119,7 +119,7 @@ export default function ApplicationForm({ role, questions }: { role: CareerRole;
 
       if (!(resume instanceof File) || resume.size === 0) throw new Error('Please upload your CV or resume.')
       if (!(introVideo instanceof File) || introVideo.size === 0) throw new Error('Please upload your intro video.')
-      if (!privacyAcknowledged) throw new Error('Please confirm you have read the Privacy Notice before submitting.')
+      if (!privacyAcknowledged) throw new Error('Please confirm you have read and understood the Privacy Notice before submitting.')
       if (!turnstileToken) throw new Error('Please complete the anti-bot verification.')
 
       const appId = crypto.randomUUID()
@@ -263,11 +263,11 @@ export default function ApplicationForm({ role, questions }: { role: CareerRole;
         <label className="flex gap-3">
           <input name="consent" type="checkbox" required className="mt-1 h-4 w-4 flex-none accent-[#C6A96C]" />
           <span>
-            I confirm I&apos;ve read the{' '}
+            I confirm that I have read and understood the{' '}
             <a href="/privacy" target="_blank" rel="noreferrer" className="font-medium text-[#1F1F1F] underline decoration-[#C6A96C] underline-offset-4">
               Privacy Notice
             </a>
-            . We delete your application data within 28 days after the role is filled or closed.
+            .
           </span>
         </label>
       </div>
