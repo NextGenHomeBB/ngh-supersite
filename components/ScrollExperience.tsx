@@ -1376,12 +1376,12 @@ export default function ScrollExperience() {
           {/* Founder Spotlight */}
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <FadeIn direction="left">
-              <div className="relative h-[500px] rounded-2xl overflow-hidden">
+              <div className="relative h-[500px] rounded-2xl overflow-hidden" style={{ backgroundColor: '#E7DED0' }}>
                 <Image
                   src="/images/mitchell.jpg"
-                  alt="Mitchell Kasiman — Founder"
+                  alt="Mitchell Kasiman, Founder"
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
               </div>
@@ -1427,21 +1427,20 @@ export default function ScrollExperience() {
                     { name: 'Lucy Leanatan', role: 'Marketing Manager', image: '/images/lucy.jpg' },
                     { name: 'Richard Argapara', role: 'Financial Manager', image: '/images/sergio.jpg' },
                     { name: 'Ibi Imrich', role: 'Sales Advisor', image: '/images/ibi.jpg' },
-                    { name: 'Steven Tan-a-Kiam', role: 'Investor & Strategic Coach', image: '/images/richard.jpg' },
+                    { name: 'Steven Tan-a-Kiam', role: 'Investor & Strategic Coach', image: '/images/steven-tan-a-kiam.jpeg' },
                     { name: 'Geraldina Sky', role: 'Sales Advisor', image: '/images/sky.jpg' },
                   ].map((member) => (
                     <div
                       key={member.name}
                       className="relative aspect-square rounded-xl overflow-hidden group"
-                      style={{ backgroundColor: '#C8B9A6' }}
+                      style={{ backgroundColor: '#E7DED0' }}
                     >
                       <Image
                         src={member.image}
                         alt={member.name}
                         fill
-                        className="object-cover"
+                        className="object-contain"
                         sizes="200px"
-                        style={{ objectPosition: 'center 20%', transform: 'scale(1.25)' }}
                       />
                       <div
                         className="absolute inset-0 flex flex-col justify-end p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
