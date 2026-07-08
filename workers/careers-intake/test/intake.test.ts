@@ -99,6 +99,12 @@ describe('intake Worker hardening', () => {
     vi.restoreAllMocks()
   })
 
+  it('sets no-referrer on normal JSON responses', async () => {
+    const response = await worker.fetch(new Request('https://intake.test/health'), testEnv() as never)
+    expect(response.status).toBe(200)
+    expect(response.headers.get('Referrer-Policy')).toBe('no-referrer')
+  })
+
   it('fails closed when Turnstile secret is missing and explicit test mode is not enabled', async () => {
     const response = await worker.fetch(
       jsonRequest('/uploads/presign', {
@@ -277,6 +283,7 @@ describe('intake Worker hardening', () => {
     expect(cvResponse.status).toBe(200)
     expect(cvResponse.headers.get('Cache-Control')).toBe('private, no-store')
     expect(cvResponse.headers.get('X-Robots-Tag')).toBe('noindex')
+    expect(cvResponse.headers.get('Referrer-Policy')).toBe('no-referrer')
     expect(cvResponse.headers.get('Content-Disposition')).toBe('attachment; filename="candidate.pdf"')
     expect(new Uint8Array(await cvResponse.arrayBuffer())).toEqual(new Uint8Array([0x25, 0x50, 0x44, 0x46]))
 
@@ -287,6 +294,7 @@ describe('intake Worker hardening', () => {
     expect(videoResponse.status).toBe(206)
     expect(videoResponse.headers.get('Cache-Control')).toBe('private, no-store')
     expect(videoResponse.headers.get('X-Robots-Tag')).toBe('noindex')
+    expect(videoResponse.headers.get('Referrer-Policy')).toBe('no-referrer')
     expect(videoResponse.headers.get('Content-Disposition')).toBe('inline')
     expect(videoResponse.headers.get('Content-Range')).toBe('bytes 2-5/10')
     expect(videoResponse.headers.get('Accept-Ranges')).toBe('bytes')

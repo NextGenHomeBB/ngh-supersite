@@ -42,9 +42,13 @@ const PRESIGNED_GET_EXPIRES_SECONDS = 24 * 60 * 60
 const SESSION_EXPIRES_SECONDS = 30 * 60
 const APP_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const APPLY_BASE_URL = 'https://apply.nghpropertygroup.com'
+const SECURITY_HEADERS = {
+  'Referrer-Policy': 'no-referrer',
+}
 
 function corsHeaders(env?: Env) {
   return {
+    ...SECURITY_HEADERS,
     'Access-Control-Allow-Origin': env?.CORS_ORIGIN || 'https://nghpropertygroup.com',
     'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type,Authorization',
@@ -345,6 +349,7 @@ function resolveVideoKey(metadata: ApplicantMetadata, appId: string) {
 
 function privateFileHeaders(contentType?: string) {
   const headers = new Headers({
+    ...SECURITY_HEADERS,
     'Cache-Control': 'private, no-store',
     'X-Robots-Tag': 'noindex',
   })
