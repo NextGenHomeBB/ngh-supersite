@@ -41,6 +41,7 @@ const PRESIGNED_PUT_EXPIRES_SECONDS = 15 * 60
 const PRESIGNED_GET_EXPIRES_SECONDS = 24 * 60 * 60
 const SESSION_EXPIRES_SECONDS = 30 * 60
 const APP_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const APPLY_BASE_URL = 'https://apply.nghpropertygroup.com'
 
 function corsHeaders(env?: Env) {
   return {
@@ -238,6 +239,10 @@ function telegramValue(value: unknown) {
   return text || 'not provided'
 }
 
+function applicantLink(appId: string, kind: 'cv' | 'video') {
+  return `${APPLY_BASE_URL}/applicants/${appId}/${kind}`
+}
+
 async function sendTelegram(env: Env, metadata: {
   appId: string
   role: string
@@ -261,6 +266,8 @@ async function sendTelegram(env: Env, metadata: {
     `Application ID: ${metadata.appId}`,
     `CV: ${hasCv ? 'yes' : 'no'}`,
     `Intro video: ${hasVideo ? 'yes' : 'no'}`,
+    `CV link: ${applicantLink(metadata.appId, 'cv')}`,
+    `Video link: ${applicantLink(metadata.appId, 'video')}`,
   ].join('\n')
   const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_NOTIFY_BOT_TOKEN}/sendMessage`, {
     method: 'POST',

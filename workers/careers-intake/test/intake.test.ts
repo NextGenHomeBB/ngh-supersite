@@ -256,6 +256,8 @@ describe('intake Worker hardening', () => {
     expect(telegram.text).toContain(`Application ID: ${appId}`)
     expect(telegram.text).toContain('CV: yes')
     expect(telegram.text).toContain('Intro video: yes')
+    expect(telegram.text).toContain(`CV link: https://apply.nghpropertygroup.com/applicants/${appId}/cv`)
+    expect(telegram.text).toContain(`Video link: https://apply.nghpropertygroup.com/applicants/${appId}/video`)
   })
 
   it('streams private CV and video objects through durable applicant routes', async () => {
