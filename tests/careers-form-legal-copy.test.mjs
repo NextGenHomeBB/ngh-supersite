@@ -42,6 +42,12 @@ assert.equal(existsSync(new URL('../public/images/lucy-leanatan.jpeg', import.me
 assert.equal(existsSync(new URL('../public/images/richard-argapara.jpeg', import.meta.url)), true)
 assert.equal(existsSync(new URL('../public/images/steven-tan-a-kiam.jpeg', import.meta.url)), true)
 
+const careersConfig = readFileSync(new URL('../data/careers.ts', import.meta.url), 'utf8')
+assert.match(careersConfig, /roleCode: 'OPM'/)
+assert.match(careersConfig, /roleCode: 'FSD'/)
+assert.match(careersConfig, /roleCode: 'GEN'/)
+assert.match(careersConfig, /roleCode: string/)
+
 const headersUrl = new URL('../public/_headers', import.meta.url)
 assert.equal(existsSync(headersUrl), true)
 const headers = readFileSync(headersUrl, 'utf8')

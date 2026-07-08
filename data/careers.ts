@@ -23,6 +23,7 @@ export type CareerRole = {
   description: string
   requirements: string[]
   closingDate: string
+  roleCode: string
   extraQuestions: CareerQuestion[]
 }
 
@@ -78,6 +79,7 @@ export const careerRoles: CareerRole[] = [
     type: 'Full-time',
     status: 'open',
     closingDate: '2026-09-30',
+    roleCode: 'OPM',
     description:
       'Help NGH run planning, procurement, reporting, and day-to-day operational control across real estate development projects in Bali.',
     requirements: [
@@ -111,6 +113,7 @@ export const careerRoles: CareerRole[] = [
     type: 'Full-time',
     status: 'open',
     closingDate: '2026-09-30',
+    roleCode: 'FSD',
     description:
       'Build and maintain NGH digital systems, AI-powered workflows, websites, and internal tooling across the property group.',
     requirements: [
@@ -144,6 +147,7 @@ export const careerRoles: CareerRole[] = [
     type: 'Full-time',
     status: 'open',
     closingDate: '2026-12-31',
+    roleCode: 'GEN',
     description:
       'Do not see the exact role yet? Introduce yourself and tell us where you can create value for NGH Property Group.',
     requirements: [

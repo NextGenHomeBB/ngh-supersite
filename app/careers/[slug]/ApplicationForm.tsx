@@ -15,6 +15,11 @@ type PresignResponse = {
   expiresAt: string
   uploads: Array<{ kind: UploadKind; key: string; uploadUrl: string }>
 }
+type FinalizeResponse = {
+  ok: boolean
+  appId: string
+  ref?: string
+}
 
 declare global {
   interface Window {
@@ -173,8 +178,10 @@ export default function ApplicationForm({ role, questions }: { role: CareerRole;
         throw new Error(body.error || 'Application submission failed after upload.')
       }
 
+      const finalizeBody = await finalizeResponse.json().catch(() => ({})) as Partial<FinalizeResponse>
+
       setStatus('success')
-      setMessage(`Application received. Your application ID is ${appId}.`)
+      setMessage(`Application received. Your reference is ${finalizeBody.ref || appId}.`)
       form.reset()
       setTurnstileToken('')
       window.turnstile?.reset(widgetIdRef.current)

@@ -246,8 +246,21 @@ describe('intake Worker hardening', () => {
         { kind: 'introVideo', fileName: 'candidate.mp4', size: 12, contentType: 'video/mp4', key: videoKey },
       ],
     })
+    bucket.seedJson('applications/22222222-2222-4222-8222-222222222222/metadata.json', {
+      appId: '22222222-2222-4222-8222-222222222222',
+      roleSlug: 'operations-planning-manager',
+      roleCloseDate: '2099-12-31',
+      ref: 'OPM-AAAA',
+    })
     bucket.seedFile(resumeKey, new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d]))
     bucket.seedFile(videoKey, new Uint8Array([0x00, 0x00, 0x00, 0x18, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d]))
+    let randomCall = 0
+    vi.spyOn(crypto, 'getRandomValues').mockImplementation((array: ArrayBufferView) => {
+      const bytes = new Uint8Array(array.buffer, array.byteOffset, array.byteLength)
+      bytes.set(randomCall === 0 ? [0, 0, 0, 0] : [1, 1, 1, 1])
+      randomCall += 1
+      return array
+    })
 
     const calls: Array<{ url: string; body: unknown }> = []
     vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -276,8 +289,10 @@ describe('intake Worker hardening', () => {
 
     expect(response.status).toBe(200)
     expect(calls.some((call) => call.url.includes('/emails'))).toBe(false)
-    const metadata = bucket.objects.get(`applications/${appId}/metadata.json`)?.body as { applicantName: string; applicantDateOfBirth: string; applicantEmail: string; applicantPhone: string; role: string; cvKey: string; videoUrl: string; answers: Record<string, string> }
+    const metadata = bucket.objects.get(`applications/${appId}/metadata.json`)?.body as { ref: string; roleCode: string; applicantName: string; applicantDateOfBirth: string; applicantEmail: string; applicantPhone: string; role: string; cvKey: string; videoUrl: string; answers: Record<string, string> }
     expect(metadata).toMatchObject({
+      ref: 'OPM-BBBB',
+      roleCode: 'OPM',
       applicantName: 'Jane Candidate',
       applicantDateOfBirth: '1991-02-03',
       applicantEmail: 'jane@example.com',
@@ -286,13 +301,15 @@ describe('intake Worker hardening', () => {
       cvKey: resumeKey,
     })
     expect(metadata.answers.availability).toBe('now')
+    expect(appId).not.toContain(metadata.ref.replace('OPM-', ''))
     expect(metadata.videoUrl).toContain(videoKey)
 
     const telegram = calls.find((call) => call.url.includes('api.telegram.org'))?.body as { text: string }
-    expect(telegram.text).toContain('New application for Operations & Planning Manager')
-    expect(telegram.text).toContain(`Application ID: ${appId}`)
+    expect(telegram.text).toContain('New Operations & Planning Manager application · Ref OPM-BBBB')
     expect(telegram.text).toContain(`CV link: https://apply.nghpropertygroup.com/applicants/${appId}/cv`)
     expect(telegram.text).toContain(`Video link: https://apply.nghpropertygroup.com/applicants/${appId}/video`)
+    expect(telegram.text).not.toContain('Application ID:')
+    expect(telegram.text).not.toContain('OPM-AAAA')
     expect(telegram.text).not.toContain('Jane Candidate')
     expect(telegram.text).not.toContain('jane@example.com')
     expect(telegram.text).not.toContain('+62 812')

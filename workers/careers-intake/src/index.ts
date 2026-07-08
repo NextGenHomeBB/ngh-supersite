@@ -42,6 +42,9 @@ const PRESIGNED_GET_EXPIRES_SECONDS = 24 * 60 * 60
 const SESSION_EXPIRES_SECONDS = 30 * 60
 const APP_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const APPLY_BASE_URL = 'https://apply.nghpropertygroup.com'
+const SAFE_REF_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+const REF_TOKEN_LENGTH = 4
+const REF_COLLISION_ATTEMPTS = 8
 const SECURITY_HEADERS = {
   'Referrer-Policy': 'no-referrer',
 }
@@ -77,6 +80,43 @@ async function readJson<T>(request: Request) {
 function requireString(value: unknown, name: string) {
   if (typeof value !== 'string' || !value.trim()) throw new Error(`${name} is required.`)
   return value.trim()
+}
+
+function randomRefToken() {
+  const bytes = new Uint8Array(REF_TOKEN_LENGTH)
+  crypto.getRandomValues(bytes)
+  return [...bytes].map((byte) => SAFE_REF_ALPHABET[byte % SAFE_REF_ALPHABET.length]).join('')
+}
+
+async function refExistsForActiveRole(env: Env, roleSlug: string, ref: string, now = new Date()) {
+  let cursor: string | undefined
+  do {
+    const listed = await env.CAREERS_BUCKET.list({ prefix: 'applications/', cursor })
+    const metadataJsons = listed.objects.filter((object) => object.key.endsWith('/metadata.json'))
+    for (const object of metadataJsons) {
+      const metadataObject = await env.CAREERS_BUCKET.get(object.key)
+      if (!metadataObject) continue
+      const metadata = (await metadataObject.json()) as { ref?: string; roleSlug?: string; roleCloseDate?: string }
+      if (metadata.ref === ref && metadata.roleSlug === roleSlug && !isApplicationExpired(metadata.roleCloseDate || '', now)) {
+        return true
+      }
+    }
+    cursor = listed.truncated ? listed.cursor : undefined
+  } while (cursor)
+  return false
+}
+
+async function generateApplicationRef(env: Env, role: { roleCode: string; slug: string }) {
+  for (let attempt = 0; attempt < REF_COLLISION_ATTEMPTS; attempt += 1) {
+    const ref = `${role.roleCode}-${randomRefToken()}`
+    try {
+      if (!(await refExistsForActiveRole(env, role.slug, ref))) return ref
+    } catch (error) {
+      console.warn('Application ref collision check skipped:', error)
+      return ref
+    }
+  }
+  return `${role.roleCode}-${randomRefToken()}`
 }
 
 function getR2Config(env: Env) {
@@ -252,14 +292,14 @@ function applicantLink(appId: string, kind: 'cv' | 'video') {
 async function sendTelegram(env: Env, metadata: {
   appId: string
   role: string
+  ref: string
 }) {
   if (!env.TELEGRAM_NOTIFY_BOT_TOKEN || !env.TELEGRAM_NOTIFY_CHAT_ID) {
     console.info('Telegram test mode: notification skipped')
     return
   }
   const text = [
-    `New application for ${metadata.role}`,
-    `Application ID: ${metadata.appId}`,
+    `New ${metadata.role} application · Ref ${metadata.ref}`,
     `CV link: ${applicantLink(metadata.appId, 'cv')}`,
     `Video link: ${applicantLink(metadata.appId, 'video')}`,
   ].join('\n')
@@ -311,9 +351,12 @@ async function handleFinalize(request: Request, env: Env) {
   if (!resumeUpload || !videoUrl) return badRequest('Resume and intro video are required.', env)
 
   const answers = Object.fromEntries(body.answers.map((answer) => [answer.label, Array.isArray(answer.value) ? answer.value.join(', ') : answer.value]))
+  const ref = await generateApplicationRef(env, role)
   const metadata = {
     appId,
+    ref,
     role: role.title,
+    roleCode: role.roleCode,
     roleSlug,
     applicantName: body.candidate.name,
     applicantDateOfBirth: body.candidate.dateOfBirth,
@@ -331,7 +374,7 @@ async function handleFinalize(request: Request, env: Env) {
   })
 
   await sendTelegram(env, metadata)
-  return json({ ok: true, appId }, {}, env)
+  return json({ ok: true, appId, ref }, {}, env)
 }
 
 type ApplicantMetadata = {
