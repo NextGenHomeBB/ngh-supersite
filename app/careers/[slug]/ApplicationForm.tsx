@@ -155,6 +155,7 @@ export default function ApplicationForm({ role, questions }: { role: CareerRole;
           consentAccepted: privacyAcknowledged,
           candidate: {
             name: String(formData.get('name') || '').trim(),
+            dateOfBirth: String(formData.get('dateOfBirth') || '').trim(),
             email: String(formData.get('email') || '').trim(),
             phone: String(formData.get('phone') || '').trim(),
             location: String(formData.get('location') || '').trim(),
@@ -224,6 +225,7 @@ export default function ApplicationForm({ role, questions }: { role: CareerRole;
         <legend className="mb-4 text-lg font-medium">Personal information</legend>
         <div className="grid gap-4 md:grid-cols-2">
           <label className="text-sm font-medium">Full name *<input name="name" required className={inputClass()} /></label>
+          <label className="text-sm font-medium">Date of Birth *<input name="dateOfBirth" type="date" required className={inputClass()} /></label>
           <label className="text-sm font-medium">Email *<input name="email" type="email" required className={inputClass()} /></label>
           <label className="text-sm font-medium">Phone / WhatsApp *<input name="phone" type="tel" required className={inputClass()} /></label>
           <label className="text-sm font-medium">Current location *<input name="location" required className={inputClass()} /></label>

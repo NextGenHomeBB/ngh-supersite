@@ -161,7 +161,7 @@ describe('intake Worker hardening', () => {
         appId,
         roleSlug: 'operations-planning-manager',
         consentAccepted: true,
-        candidate: { name: 'Jane', email: 'jane@example.com', phone: '+62', location: 'Bali' },
+        candidate: { name: 'Jane', dateOfBirth: '1991-02-03', email: 'jane@example.com', phone: '+62', location: 'Bali' },
         answers: validAnswers(),
         uploads: [],
       }),
@@ -189,7 +189,7 @@ describe('intake Worker hardening', () => {
         appId,
         roleSlug: 'operations-planning-manager',
         consentAccepted: true,
-        candidate: { name: 'Jane', email: 'jane@example.com', phone: '+62', location: 'Bali' },
+        candidate: { name: 'Jane', dateOfBirth: '1991-02-03', email: 'jane@example.com', phone: '+62', location: 'Bali' },
         answers: validAnswers(),
         uploads: [
           { kind: 'introVideo', key: videoKey, fileName: 'candidate.mp4', size: 1000, contentType: 'video/mp4' },
@@ -199,6 +199,39 @@ describe('intake Worker hardening', () => {
     )
 
     expect(response.status).toBe(400)
+    expect(bucket.objects.has(`applications/${appId}/metadata.json`)).toBe(false)
+  })
+
+  it('rejects finalize when Date of Birth is missing', async () => {
+    const bucket = new FakeBucket()
+    bucket.seedJson(`applications/${appId}/session.json`, {
+      appId,
+      roleSlug: 'operations-planning-manager',
+      createdAt: new Date().toISOString(),
+      uploads: [
+        { kind: 'resume', fileName: 'candidate.pdf', size: 5, contentType: 'application/pdf', key: resumeKey },
+        { kind: 'introVideo', fileName: 'candidate.mp4', size: 12, contentType: 'video/mp4', key: videoKey },
+      ],
+    })
+
+    const response = await worker.fetch(
+      jsonRequest('/applications', {
+        appId,
+        roleSlug: 'operations-planning-manager',
+        consentAccepted: true,
+        candidate: { name: 'Jane Candidate', email: 'jane@example.com', phone: '+62 812', location: 'Bali' },
+        answers: validAnswers(),
+        uploads: [
+          { kind: 'resume', key: resumeKey, fileName: 'ignored.pdf', size: 5, contentType: 'application/pdf' },
+          { kind: 'introVideo', key: videoKey, fileName: 'ignored.mp4', size: 12, contentType: 'video/mp4' },
+        ],
+      }),
+      testEnv(bucket) as never,
+    )
+
+    expect(response.status).toBe(400)
+    const body = await response.json() as { error: string }
+    expect(body.error).toBe('Candidate date of birth is required.')
     expect(bucket.objects.has(`applications/${appId}/metadata.json`)).toBe(false)
   })
 
@@ -227,7 +260,7 @@ describe('intake Worker hardening', () => {
         appId,
         roleSlug: 'operations-planning-manager',
         consentAccepted: true,
-        candidate: { name: 'Jane Candidate', email: 'jane@example.com', phone: '+62 812', location: 'Bali' },
+        candidate: { name: 'Jane Candidate', dateOfBirth: '1991-02-03', email: 'jane@example.com', phone: '+62 812', location: 'Bali' },
         answers: validAnswers(),
         uploads: [
           { kind: 'resume', key: resumeKey, fileName: 'ignored.pdf', size: 5, contentType: 'application/pdf' },
@@ -243,9 +276,10 @@ describe('intake Worker hardening', () => {
 
     expect(response.status).toBe(200)
     expect(calls.some((call) => call.url.includes('/emails'))).toBe(false)
-    const metadata = bucket.objects.get(`applications/${appId}/metadata.json`)?.body as { applicantName: string; applicantEmail: string; applicantPhone: string; role: string; cvKey: string; videoUrl: string; answers: Record<string, string> }
+    const metadata = bucket.objects.get(`applications/${appId}/metadata.json`)?.body as { applicantName: string; applicantDateOfBirth: string; applicantEmail: string; applicantPhone: string; role: string; cvKey: string; videoUrl: string; answers: Record<string, string> }
     expect(metadata).toMatchObject({
       applicantName: 'Jane Candidate',
+      applicantDateOfBirth: '1991-02-03',
       applicantEmail: 'jane@example.com',
       applicantPhone: '+62 812',
       role: 'Operations & Planning Manager',
@@ -262,6 +296,9 @@ describe('intake Worker hardening', () => {
     expect(telegram.text).not.toContain('Jane Candidate')
     expect(telegram.text).not.toContain('jane@example.com')
     expect(telegram.text).not.toContain('+62 812')
+    expect(telegram.text).not.toContain('1991-02-03')
+    expect(telegram.text).not.toContain('Date of Birth')
+    expect(telegram.text).not.toContain('DOB')
     expect(telegram.text).not.toContain('Name:')
     expect(telegram.text).not.toContain('Email:')
     expect(telegram.text).not.toContain('Phone:')

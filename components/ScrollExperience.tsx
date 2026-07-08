@@ -1936,4 +1936,6 @@ const NAV_LINKS_FOOTER = [
   { label: 'Insights', href: '#insights' },
   { label: 'Bali Guide', href: '#bali-guide' },
   { label: 'Contact', href: '#contact' },
+  { label: 'Careers', href: '/careers' },
+  { label: 'Privacy', href: '/privacy' },
 ];

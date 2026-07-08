@@ -213,8 +213,15 @@ function validateAnswers(roleSlug: string, body: FinalizeBody) {
   for (const id of requiredQuestionIds) {
     if (!answered.has(id)) return `Required question is missing: ${id}`
   }
-  for (const field of ['name', 'email', 'phone', 'location']) {
-    if (!body.candidate?.[field]?.trim()) return `Candidate ${field} is required.`
+  const requiredCandidateFields: Array<[string, string]> = [
+    ['name', 'name'],
+    ['dateOfBirth', 'date of birth'],
+    ['email', 'email'],
+    ['phone', 'phone'],
+    ['location', 'location'],
+  ]
+  for (const [field, label] of requiredCandidateFields) {
+    if (!body.candidate?.[field]?.trim()) return `Candidate ${label} is required.`
   }
   if (!body.consentAccepted) return 'Required privacy consent was not accepted.'
   return null
@@ -309,6 +316,7 @@ async function handleFinalize(request: Request, env: Env) {
     role: role.title,
     roleSlug,
     applicantName: body.candidate.name,
+    applicantDateOfBirth: body.candidate.dateOfBirth,
     applicantEmail: body.candidate.email,
     applicantPhone: body.candidate.phone,
     answers,
