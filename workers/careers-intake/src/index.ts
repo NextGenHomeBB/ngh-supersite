@@ -320,6 +320,7 @@ async function handleFinalize(request: Request, env: Env) {
     answers,
     cvKey: resumeUpload.key,
     videoUrl,
+    videoKey: finalUploads.find((upload) => upload.kind === 'introVideo')?.key,
     createdAt: new Date().toISOString(),
     roleCloseDate: role.closingDate,
   }
@@ -329,6 +330,96 @@ async function handleFinalize(request: Request, env: Env) {
 
   await sendTelegram(env, metadata, finalUploads)
   return json({ ok: true, appId }, {}, env)
+}
+
+type ApplicantMetadata = {
+  appId: string
+  cvKey?: string
+  videoKey?: string
+  videoUrl?: string
+}
+
+function safeDownloadName(key: string) {
+  const name = key.split('/').pop() || 'file'
+  return name.replace(/["\\\r\n]/g, '_')
+}
+
+function resolveVideoKey(metadata: ApplicantMetadata, appId: string) {
+  if (typeof metadata.videoKey === 'string' && metadata.videoKey.startsWith(`applications/${appId}/`)) return metadata.videoKey
+  if (typeof metadata.videoUrl === 'string') {
+    const match = metadata.videoUrl.match(new RegExp(`applications/${appId}/[^?]+`))
+    if (match) return decodeURIComponent(match[0])
+  }
+  return ''
+}
+
+function privateFileHeaders(contentType?: string) {
+  const headers = new Headers({
+    'Cache-Control': 'private, no-store',
+    'X-Robots-Tag': 'noindex',
+  })
+  if (contentType) headers.set('Content-Type', contentType)
+  return headers
+}
+
+function parseRangeHeader(rangeHeader: string | null, size: number) {
+  if (!rangeHeader) return null
+  const match = rangeHeader.match(/^bytes=(\d*)-(\d*)$/)
+  if (!match) return { invalid: true as const }
+  let start: number
+  let end: number
+  if (match[1] === '' && match[2] === '') return { invalid: true as const }
+  if (match[1] === '') {
+    const suffix = Number(match[2])
+    if (!Number.isInteger(suffix) || suffix <= 0) return { invalid: true as const }
+    start = Math.max(size - suffix, 0)
+    end = size - 1
+  } else {
+    start = Number(match[1])
+    end = match[2] === '' ? size - 1 : Number(match[2])
+  }
+  if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end < start || start >= size) return { invalid: true as const }
+  return { invalid: false as const, start, end: Math.min(end, size - 1) }
+}
+
+async function handleApplicantFile(request: Request, env: Env, appId: string, kind: 'cv' | 'video') {
+  if (!APP_ID_RE.test(appId)) return badRequest('Invalid application ID.', env)
+  const metadataObject = await env.CAREERS_BUCKET.get(`applications/${appId}/metadata.json`)
+  if (!metadataObject) return json({ error: 'Application not found.' }, { status: 404 }, env)
+  const metadata = (await metadataObject.json()) as ApplicantMetadata
+  const key = kind === 'cv' ? metadata.cvKey : resolveVideoKey(metadata, appId)
+  if (!key || !key.startsWith(`applications/${appId}/`)) return json({ error: 'File not found.' }, { status: 404 }, env)
+  const head = await env.CAREERS_BUCKET.head(key)
+  if (!head) return json({ error: 'File not found.' }, { status: 404 }, env)
+  const contentType = head.httpMetadata?.contentType || (kind === 'video' ? 'video/mp4' : 'application/octet-stream')
+
+  if (kind === 'video') {
+    const range = parseRangeHeader(request.headers.get('Range'), head.size)
+    if (range?.invalid) {
+      return new Response(null, { status: 416, headers: { 'Content-Range': `bytes */${head.size}`, ...corsHeaders(env) } })
+    }
+    const headers = privateFileHeaders(contentType)
+    headers.set('Content-Disposition', 'inline')
+    headers.set('Accept-Ranges', 'bytes')
+    if (range && !range.invalid) {
+      const object = await env.CAREERS_BUCKET.get(key, { range: { offset: range.start, length: range.end - range.start + 1 } })
+      if (!object?.body) return json({ error: 'File not found.' }, { status: 404 }, env)
+      headers.set('Content-Range', `bytes ${range.start}-${range.end}/${head.size}`)
+      headers.set('Content-Length', String(range.end - range.start + 1))
+      return new Response(object.body, { status: 206, headers })
+    }
+    const object = await env.CAREERS_BUCKET.get(key)
+    if (!object?.body) return json({ error: 'File not found.' }, { status: 404 }, env)
+    headers.set('Content-Length', String(head.size))
+    return new Response(object.body, { status: 200, headers })
+  }
+
+  const object = await env.CAREERS_BUCKET.get(key)
+  if (!object?.body) return json({ error: 'File not found.' }, { status: 404 }, env)
+  const headers = privateFileHeaders(contentType)
+  headers.set('Content-Disposition', `attachment; filename="${safeDownloadName(key)}"`)
+  headers.set('Content-Length', String(head.size))
+  return new Response(object.body, { status: 200, headers })
 }
 
 async function deletePrefix(bucket: R2Bucket, prefix: string) {
@@ -394,6 +485,10 @@ export default {
     const url = new URL(request.url)
     try {
       if (request.method === 'GET' && url.pathname === '/health') return json({ ok: true }, {}, env)
+      if (request.method === 'GET') {
+        const match = url.pathname.match(/^\/applicants\/([^/]+)\/(cv|video)$/)
+        if (match) return await handleApplicantFile(request, env, match[1], match[2] as 'cv' | 'video')
+      }
       if (request.method === 'POST' && url.pathname === '/uploads/presign') return await handlePresign(request, env)
       if (request.method === 'POST' && url.pathname === '/applications') return await handleFinalize(request, env)
       if (request.method === 'POST' && url.pathname === '/admin/delete-application') return await handleAdminDelete(request, env)

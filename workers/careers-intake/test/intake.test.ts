@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import worker from '../src/index'
 
-type StoredObject = { key: string; body: unknown; size: number; bytes?: Uint8Array }
+type StoredObject = { key: string; body: unknown; size: number; bytes?: Uint8Array; contentType?: string }
 
 class FakeBucket {
   objects = new Map<string, StoredObject>()
@@ -12,27 +12,35 @@ class FakeBucket {
     this.objects.set(key, { key, body, size: raw.length })
   }
 
-  seedFile(key: string, bytes: Uint8Array) {
-    this.objects.set(key, { key, body: null, size: bytes.byteLength, bytes })
+  seedFile(key: string, bytes: Uint8Array, contentType = 'application/octet-stream') {
+    this.objects.set(key, { key, body: null, size: bytes.byteLength, bytes, contentType })
   }
 
   async put(key: string, value: string) {
     this.objects.set(key, { key, body: JSON.parse(value), size: value.length })
   }
 
-  async get(key: string) {
+  async get(key: string, options?: { range?: { offset?: number; length?: number } }) {
     const object = this.objects.get(key)
     if (!object) return null
+    const rawBytes = object.bytes || new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d])
+    const offset = options?.range?.offset ?? 0
+    const length = options?.range?.length ?? rawBytes.byteLength - offset
+    const bytes = rawBytes.slice(offset, offset + length)
     return {
+      key,
+      size: object.size,
+      httpMetadata: { contentType: object.contentType },
+      body: new Response(bytes).body,
       json: async () => object.body,
-      arrayBuffer: async () => (object.bytes || new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d])).buffer,
+      arrayBuffer: async () => bytes.buffer,
     }
   }
 
   async head(key: string) {
     const object = this.objects.get(key)
     if (!object) return null
-    return { size: object.size }
+    return { size: object.size, httpMetadata: { contentType: object.contentType } }
   }
 
   async list({ prefix }: { prefix?: string; cursor?: string }) {
@@ -248,5 +256,41 @@ describe('intake Worker hardening', () => {
     expect(telegram.text).toContain(`Application ID: ${appId}`)
     expect(telegram.text).toContain('CV: yes')
     expect(telegram.text).toContain('Intro video: yes')
+  })
+
+  it('streams private CV and video objects through durable applicant routes', async () => {
+    const bucket = new FakeBucket()
+    const videoBytes = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    bucket.seedJson(`applications/${appId}/metadata.json`, {
+      appId,
+      cvKey: resumeKey,
+      videoKey,
+    })
+    bucket.seedFile(resumeKey, new Uint8Array([0x25, 0x50, 0x44, 0x46]), 'application/pdf')
+    bucket.seedFile(videoKey, videoBytes, 'video/mp4')
+
+    const cvResponse = await worker.fetch(new Request(`https://intake.test/applicants/${appId}/cv`), testEnv(bucket) as never)
+    expect(cvResponse.status).toBe(200)
+    expect(cvResponse.headers.get('Cache-Control')).toBe('private, no-store')
+    expect(cvResponse.headers.get('X-Robots-Tag')).toBe('noindex')
+    expect(cvResponse.headers.get('Content-Disposition')).toBe('attachment; filename="candidate.pdf"')
+    expect(new Uint8Array(await cvResponse.arrayBuffer())).toEqual(new Uint8Array([0x25, 0x50, 0x44, 0x46]))
+
+    const videoResponse = await worker.fetch(
+      new Request(`https://intake.test/applicants/${appId}/video`, { headers: { Range: 'bytes=2-5' } }),
+      testEnv(bucket) as never,
+    )
+    expect(videoResponse.status).toBe(206)
+    expect(videoResponse.headers.get('Cache-Control')).toBe('private, no-store')
+    expect(videoResponse.headers.get('X-Robots-Tag')).toBe('noindex')
+    expect(videoResponse.headers.get('Content-Disposition')).toBe('inline')
+    expect(videoResponse.headers.get('Content-Range')).toBe('bytes 2-5/10')
+    expect(videoResponse.headers.get('Accept-Ranges')).toBe('bytes')
+    expect(new Uint8Array(await videoResponse.arrayBuffer())).toEqual(new Uint8Array([2, 3, 4, 5]))
+  })
+
+  it('rejects invalid applicant route UUIDs before R2 lookup', async () => {
+    const response = await worker.fetch(new Request('https://intake.test/applicants/not-a-uuid/cv'), testEnv() as never)
+    expect(response.status).toBe(400)
   })
 })
