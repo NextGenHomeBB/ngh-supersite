@@ -1378,7 +1378,7 @@ export default function ScrollExperience() {
             <FadeIn direction="left">
               <div className="relative h-[500px] rounded-2xl overflow-hidden" style={{ backgroundColor: '#E7DED0' }}>
                 <Image
-                  src="/images/mitchell.jpg"
+                  src="/images/mitchell-founder-fill.jpg"
                   alt="Mitchell Kasiman, Founder"
                   fill
                   className="object-cover"
