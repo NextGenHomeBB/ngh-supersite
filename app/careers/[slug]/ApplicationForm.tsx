@@ -115,11 +115,11 @@ export default function ApplicationForm({ role, questions }: { role: CareerRole;
       const formData = new FormData(form)
       const resume = formData.get('resume')
       const introVideo = formData.get('introVideo')
-      const consent = formData.get('consent') === 'on'
+      const privacyAcknowledged = formData.get('consent') === 'on'
 
       if (!(resume instanceof File) || resume.size === 0) throw new Error('Please upload your CV or resume.')
       if (!(introVideo instanceof File) || introVideo.size === 0) throw new Error('Please upload your intro video.')
-      if (!consent) throw new Error('Please accept the required privacy consent before submitting.')
+      if (!privacyAcknowledged) throw new Error('Please confirm you have read the Privacy Notice before submitting.')
       if (!turnstileToken) throw new Error('Please complete the anti-bot verification.')
 
       const appId = crypto.randomUUID()
@@ -152,7 +152,7 @@ export default function ApplicationForm({ role, questions }: { role: CareerRole;
         body: JSON.stringify({
           appId,
           roleSlug: role.slug,
-          consentAccepted: consent,
+          consentAccepted: privacyAcknowledged,
           candidate: {
             name: String(formData.get('name') || '').trim(),
             email: String(formData.get('email') || '').trim(),
@@ -263,9 +263,9 @@ export default function ApplicationForm({ role, questions }: { role: CareerRole;
         <label className="flex gap-3">
           <input name="consent" type="checkbox" required className="mt-1 h-4 w-4 flex-none accent-[#C6A96C]" />
           <span>
-            I consent to NGH Property Group processing my application data for recruitment purposes, including my CV and intro video, under the{' '}
+            I confirm I&apos;ve read the{' '}
             <a href="/privacy" target="_blank" rel="noreferrer" className="font-medium text-[#1F1F1F] underline decoration-[#C6A96C] underline-offset-4">
-              NGH privacy statement
+              Privacy Notice
             </a>
             . We delete your application data within 28 days after the role is filled or closed.
           </span>
