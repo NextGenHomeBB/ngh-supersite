@@ -233,15 +233,39 @@ async function signedGetLinks(env: Env, uploads: FinalizeUpload[]) {
   )
 }
 
-async function sendTelegram(env: Env, roleTitle: string) {
+function telegramValue(value: unknown) {
+  const text = typeof value === 'string' ? value.trim() : ''
+  return text || 'not provided'
+}
+
+async function sendTelegram(env: Env, metadata: {
+  appId: string
+  role: string
+  applicantName: string
+  applicantEmail: string
+  applicantPhone: string
+  createdAt: string
+}, uploads: FinalizeUpload[]) {
   if (!env.TELEGRAM_NOTIFY_BOT_TOKEN || !env.TELEGRAM_NOTIFY_CHAT_ID) {
     console.info('Telegram test mode: notification skipped')
     return
   }
+  const hasCv = uploads.some((upload) => upload.kind === 'resume')
+  const hasVideo = uploads.some((upload) => upload.kind === 'introVideo')
+  const text = [
+    `New application for ${metadata.role}`,
+    `Name: ${telegramValue(metadata.applicantName)}`,
+    `Email: ${telegramValue(metadata.applicantEmail)}`,
+    `Phone: ${telegramValue(metadata.applicantPhone)}`,
+    `Submitted: ${telegramValue(metadata.createdAt)}`,
+    `Application ID: ${metadata.appId}`,
+    `CV: ${hasCv ? 'yes' : 'no'}`,
+    `Intro video: ${hasVideo ? 'yes' : 'no'}`,
+  ].join('\n')
   const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_NOTIFY_BOT_TOKEN}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: env.TELEGRAM_NOTIFY_CHAT_ID, text: `New application for ${roleTitle}`, disable_web_page_preview: true }),
+    body: JSON.stringify({ chat_id: env.TELEGRAM_NOTIFY_CHAT_ID, text, disable_web_page_preview: true }),
   })
   if (!response.ok) throw new Error('Telegram notification failed.')
 }
@@ -303,7 +327,7 @@ async function handleFinalize(request: Request, env: Env) {
     httpMetadata: { contentType: 'application/json' },
   })
 
-  await sendTelegram(env, role.title)
+  await sendTelegram(env, metadata, finalUploads)
   return json({ ok: true, appId }, {}, env)
 }
 

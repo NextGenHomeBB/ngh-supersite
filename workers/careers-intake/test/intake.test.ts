@@ -159,6 +159,35 @@ describe('intake Worker hardening', () => {
     expect(body.error).toMatch(/Exactly one resume and one intro video/)
   })
 
+  it('rejects finalize when the signed session is missing a resume and does not write metadata', async () => {
+    const bucket = new FakeBucket()
+    bucket.seedJson(`applications/${appId}/session.json`, {
+      appId,
+      roleSlug: 'operations-planning-manager',
+      createdAt: new Date().toISOString(),
+      uploads: [
+        { kind: 'introVideo', fileName: 'candidate.mp4', size: 1000, contentType: 'video/mp4', key: videoKey },
+      ],
+    })
+
+    const response = await worker.fetch(
+      jsonRequest('/applications', {
+        appId,
+        roleSlug: 'operations-planning-manager',
+        consentAccepted: true,
+        candidate: { name: 'Jane', email: 'jane@example.com', phone: '+62', location: 'Bali' },
+        answers: validAnswers(),
+        uploads: [
+          { kind: 'introVideo', key: videoKey, fileName: 'candidate.mp4', size: 1000, contentType: 'video/mp4' },
+        ],
+      }),
+      { CAREERS_BUCKET: bucket } as never,
+    )
+
+    expect(response.status).toBe(400)
+    expect(bucket.objects.has(`applications/${appId}/metadata.json`)).toBe(false)
+  })
+
   it('writes metadata.json and sends only the secondary Telegram ping on finalize', async () => {
     const bucket = new FakeBucket()
     bucket.seedJson(`applications/${appId}/session.json`, {
@@ -212,8 +241,12 @@ describe('intake Worker hardening', () => {
     expect(metadata.videoUrl).toContain(videoKey)
 
     const telegram = calls.find((call) => call.url.includes('api.telegram.org'))?.body as { text: string }
-    expect(telegram.text).toBe('New application for Operations & Planning Manager')
-    expect(telegram.text).not.toContain('Jane')
-    expect(telegram.text).not.toContain('jane@example.com')
+    expect(telegram.text).toContain('New application for Operations & Planning Manager')
+    expect(telegram.text).toContain('Name: Jane Candidate')
+    expect(telegram.text).toContain('Email: jane@example.com')
+    expect(telegram.text).toContain('Phone: +62 812')
+    expect(telegram.text).toContain(`Application ID: ${appId}`)
+    expect(telegram.text).toContain('CV: yes')
+    expect(telegram.text).toContain('Intro video: yes')
   })
 })

@@ -113,12 +113,12 @@ export default function ApplicationForm({ role, questions }: { role: CareerRole;
     try {
       const form = event.currentTarget
       const formData = new FormData(form)
-      const resume = formData.get('resume') as File | null
-      const introVideo = formData.get('introVideo') as File | null
+      const resume = formData.get('resume')
+      const introVideo = formData.get('introVideo')
       const consent = formData.get('consent') === 'on'
 
-      if (!resume || resume.size === 0) throw new Error('Please upload your CV or resume.')
-      if (!introVideo || introVideo.size === 0) throw new Error('Please upload your intro video.')
+      if (!(resume instanceof File) || resume.size === 0) throw new Error('Please upload your CV or resume.')
+      if (!(introVideo instanceof File) || introVideo.size === 0) throw new Error('Please upload your intro video.')
       if (!consent) throw new Error('Please accept the required privacy consent before submitting.')
       if (!turnstileToken) throw new Error('Please complete the anti-bot verification.')
 
