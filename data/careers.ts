@@ -105,66 +105,6 @@ export const careerRoles: CareerRole[] = [
       },
     ],
   },
-  {
-    slug: 'full-stack-developer',
-    title: 'Full Stack Developer',
-    department: 'Technology',
-    location: 'Remote / Bali',
-    type: 'Full-time',
-    status: 'open',
-    closingDate: '2026-09-30',
-    roleCode: 'FSD',
-    description:
-      'Build and maintain NGH digital systems, AI-powered workflows, websites, and internal tooling across the property group.',
-    requirements: [
-      'Strong Next.js, React, TypeScript, and backend/API experience.',
-      'Comfort with deployment workflows and GitHub collaboration.',
-      'Experience integrating AI tools or APIs is a strong plus.',
-      'Clear communication and disciplined testing habits.',
-    ],
-    extraQuestions: [
-      {
-        id: 'fullStackProject',
-        label: 'Describe a full-stack project you built from scratch. What was the stack, challenge, and outcome?',
-        type: 'textarea',
-        section: 'Role-specific questions',
-        required: true,
-      },
-      {
-        id: 'aiWorkPastSixMonths',
-        label: 'What have you done in the past 6 months involving AI, automation, agents, or LLM APIs?',
-        type: 'textarea',
-        section: 'Role-specific questions',
-        required: true,
-      },
-    ],
-  },
-  {
-    slug: 'open-application',
-    title: 'Open Application',
-    department: 'General',
-    location: 'Bali / Remote',
-    type: 'Full-time',
-    status: 'open',
-    closingDate: '2026-12-31',
-    roleCode: 'GEN',
-    description:
-      'Do not see the exact role yet? Introduce yourself and tell us where you can create value for NGH Property Group.',
-    requirements: [
-      'Relevant professional experience for the area you want to support.',
-      'High ownership, clear communication, and strong follow-through.',
-      'Comfort working in a fast-moving real estate and hospitality environment.',
-    ],
-    extraQuestions: [
-      {
-        id: 'roleFit',
-        label: 'Which role or department do you think fits you best, and why?',
-        type: 'textarea',
-        section: 'Role-specific questions',
-        required: true,
-      },
-    ],
-  },
 ]
 
 export function getCareerRole(slug: string) {
