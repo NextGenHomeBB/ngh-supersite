@@ -22,7 +22,6 @@ export type CareerRole = {
   status: CareerStatus
   description: string
   summary?: string[]
-  roleOverview?: string
   responsibilities?: string[]
   requirements: string[]
   offer?: string[]
@@ -91,8 +90,6 @@ export const careerRoles: CareerRole[] = [
       "As our Operations & Planning Manager, you'll coordinate daily operations across multiple projects, keep teams aligned, manage timelines and deadlines, and ensure execution happens at the highest standard.",
       'This role is ideal for someone with experience in operations, project management, construction coordination, or real estate development who thrives in a fast-paced environment.',
     ],
-    roleOverview:
-      "As Operations & Planning Manager, you take full ownership of daily operations and long-term project planning. You are the person who makes sure everything runs on time, on budget, and at the highest standard. You don't just manage — you lead, motivate, and get results.",
     responsibilities: [
       'Plan and coordinate daily operations across multiple projects',
       'Take full ownership and accountability for deliverables',
@@ -108,8 +105,7 @@ export const careerRoles: CareerRole[] = [
       'Strong leadership skills — you can motivate people and hold them accountable',
       'Excellent planning and organizational abilities',
       'Hands-on mentality — you get things done, not just delegate',
-      'Fluent in English',
-      'Based in or willing to relocate to Bali',
+      'Open to Indonesian nationals — based in or willing to relocate to Bali, and fluent in English',
       'Experience with real estate or construction is a strong advantage',
     ],
     offer: [
