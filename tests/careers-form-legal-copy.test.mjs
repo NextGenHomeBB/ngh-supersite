@@ -55,4 +55,8 @@ assert.equal(existsSync(headersUrl), true)
 const headers = readFileSync(headersUrl, 'utf8')
 assert.match(headers, /\/\*\s*\n\s*Referrer-Policy:\s*no-referrer/)
 
+const redirects = readFileSync(new URL('../public/_redirects', import.meta.url), 'utf8')
+assert.match(redirects, /\/careers\/full-stack-developer \/careers 301!/) 
+assert.match(redirects, /\/careers\/open-application \/careers 301!/)
+
 console.log('careers legal copy ok')
