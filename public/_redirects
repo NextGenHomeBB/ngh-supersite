@@ -1,3 +1,7 @@
+# Canonicalize removed test careers roles to the active careers index.
+/careers/full-stack-developer /careers 301!
+/careers/open-application /careers 301!
+
 # Canonicalize www to apex so careers submissions use the single approved origin.
 https://www.nghpropertygroup.com/careers https://nghpropertygroup.com/careers 301!
 https://www.nghpropertygroup.com/* https://nghpropertygroup.com/:splat 301!
