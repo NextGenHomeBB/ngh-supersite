@@ -21,7 +21,12 @@ export type CareerRole = {
   type: JobType
   status: CareerStatus
   description: string
+  summary?: string[]
+  roleOverview?: string
+  responsibilities?: string[]
   requirements: string[]
+  offer?: string[]
+  howToApply?: string
   closingDate: string
   roleCode: string
   extraQuestions: CareerQuestion[]
@@ -78,16 +83,43 @@ export const careerRoles: CareerRole[] = [
     location: 'Bali, Indonesia',
     type: 'Full-time',
     status: 'open',
-    closingDate: '2026-09-30',
+    closingDate: '2026-07-20',
     roleCode: 'OPM',
     description:
-      'Help NGH run planning, procurement, reporting, and day-to-day operational control across real estate development projects in Bali.',
-    requirements: [
-      'Professional experience in operations, planning, logistics, procurement, or project control.',
-      'Strong spreadsheet and reporting discipline.',
-      'Comfort coordinating vendors, stakeholders, and multiple deadlines.',
-      'Open to working with AI-supported NGH systems and workflows.',
+      "As our Operations & Planning Manager, you'll coordinate daily operations across multiple projects, keep teams aligned, manage timelines and deadlines, and ensure execution happens at the highest standard.",
+    summary: [
+      "As our Operations & Planning Manager, you'll coordinate daily operations across multiple projects, keep teams aligned, manage timelines and deadlines, and ensure execution happens at the highest standard.",
+      'This role is ideal for someone with experience in operations, project management, construction coordination, or real estate development who thrives in a fast-paced environment.',
     ],
+    roleOverview:
+      "As Operations & Planning Manager, you take full ownership of daily operations and long-term project planning. You are the person who makes sure everything runs on time, on budget, and at the highest standard. You don't just manage — you lead, motivate, and get results.",
+    responsibilities: [
+      'Plan and coordinate daily operations across multiple projects',
+      'Take full ownership and accountability for deliverables',
+      'Create and manage project timelines, milestones, and deadlines',
+      'Motivate and lead the on-site team with a reward-based approach',
+      'Coordinate between departments: construction, admin, marketing, finance',
+      'Report directly to the CEO with clear progress updates',
+      'Solve problems fast — execute many tasks in short time frames',
+      'Maintain quality standards across all operational processes',
+    ],
+    requirements: [
+      '3+ years experience in operations, project management, or construction coordination',
+      'Strong leadership skills — you can motivate people and hold them accountable',
+      'Excellent planning and organizational abilities',
+      'Hands-on mentality — you get things done, not just delegate',
+      'Fluent in English',
+      'Based in or willing to relocate to Bali',
+      'Experience with real estate or construction is a strong advantage',
+    ],
+    offer: [
+      'Salary: IDR 6,000,000 — 9,000,000 per month based on experience',
+      'Be part of a premium international real estate project',
+      'Direct collaboration with the CEO and leadership team',
+      'Performance-based growth and reward system',
+      'Dynamic, fast-paced work environment in Bali',
+    ],
+    howToApply: 'Send your CV and a short motivation to the NGH Property Group team. Position starts immediately.',
     extraQuestions: [
       {
         id: 'projectControlExample',

@@ -52,9 +52,13 @@ export default function CareersPage() {
                   {role.title}
                 </h3>
                 <p className="mt-3 text-sm text-[#6F6A60]">{role.location}</p>
-                <p className="mt-5 flex-1 text-sm leading-relaxed text-[#4A4A4A]">{role.description}</p>
+                <div className="mt-5 flex-1 space-y-3 text-sm leading-relaxed text-[#4A4A4A]">
+                  {(role.summary ?? [role.description]).map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                </div>
                 <div className="mt-6 border-t border-[#C8B9A6]/40 pt-5 text-xs text-[#6F6A60]">
-                  Closing date: <span className="text-[#1F1F1F]">{role.closingDate}</span>
+                  Role close date: <span className="text-[#1F1F1F]">{role.closingDate}</span>
                 </div>
                 <Link
                   href={`/careers/${role.slug}`}

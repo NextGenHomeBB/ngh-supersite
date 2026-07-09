@@ -47,7 +47,11 @@ export default async function CareerDetailPage({ params }: { params: CareerPageP
           <h1 className="max-w-4xl text-4xl font-light leading-tight md:text-6xl" style={{ fontFamily: 'var(--font-serif)' }}>
             {role.title}
           </h1>
-          <p className="mt-6 max-w-3xl text-lg leading-relaxed text-[#D4D0C8]">{role.description}</p>
+          <div className="mt-6 max-w-3xl space-y-4 text-lg leading-relaxed text-[#D4D0C8]">
+            {(role.summary ?? [role.description]).map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
           <p className="mt-6 text-sm text-[#8A8F83]">Role close date: {role.closingDate}</p>
         </div>
       </section>
@@ -55,6 +59,31 @@ export default async function CareerDetailPage({ params }: { params: CareerPageP
       <section className="px-6 py-16 lg:px-8 lg:py-24">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.85fr_1.15fr]">
           <aside className="space-y-8">
+            {role.roleOverview ? (
+              <div className="rounded-3xl border border-[#C8B9A6]/40 bg-white/70 p-6 shadow-sm">
+                <h2 className="mb-4 text-2xl font-light" style={{ fontFamily: 'var(--font-serif)' }}>
+                  The Role
+                </h2>
+                <p className="text-sm leading-relaxed text-[#4A4A4A]">{role.roleOverview}</p>
+              </div>
+            ) : null}
+
+            {role.responsibilities ? (
+              <div className="rounded-3xl border border-[#C8B9A6]/40 bg-white/70 p-6 shadow-sm">
+                <h2 className="mb-4 text-2xl font-light" style={{ fontFamily: 'var(--font-serif)' }}>
+                  What you'll do
+                </h2>
+                <ul className="space-y-3 text-sm leading-relaxed text-[#4A4A4A]">
+                  {role.responsibilities.map((item) => (
+                    <li key={item} className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-[#C6A96C]" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
             <div className="rounded-3xl border border-[#C8B9A6]/40 bg-white/70 p-6 shadow-sm">
               <h2 className="mb-4 text-2xl font-light" style={{ fontFamily: 'var(--font-serif)' }}>
                 Requirements
@@ -68,6 +97,32 @@ export default async function CareerDetailPage({ params }: { params: CareerPageP
                 ))}
               </ul>
             </div>
+
+            {role.offer ? (
+              <div className="rounded-3xl border border-[#C8B9A6]/40 bg-white/70 p-6 shadow-sm">
+                <h2 className="mb-4 text-2xl font-light" style={{ fontFamily: 'var(--font-serif)' }}>
+                  What We Offer
+                </h2>
+                <ul className="space-y-3 text-sm leading-relaxed text-[#4A4A4A]">
+                  {role.offer.map((item) => (
+                    <li key={item} className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-[#C6A96C]" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
+            {role.howToApply ? (
+              <div className="rounded-3xl border border-[#C8B9A6]/40 bg-white/70 p-6 shadow-sm">
+                <h2 className="mb-4 text-2xl font-light" style={{ fontFamily: 'var(--font-serif)' }}>
+                  How to Apply
+                </h2>
+                <p className="text-sm leading-relaxed text-[#4A4A4A]">{role.howToApply}</p>
+              </div>
+            ) : null}
+
             <div className="rounded-3xl border border-[#C8B9A6]/40 bg-[#1F1F1F] p-6 text-[#F5F3EE] shadow-sm">
               <h2 className="mb-3 text-2xl font-light" style={{ fontFamily: 'var(--font-serif)' }}>
                 Application package
