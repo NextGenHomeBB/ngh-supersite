@@ -223,9 +223,6 @@ export default function ApplicationForm({ role, questions }: { role: CareerRole;
         <h2 className="mt-3 text-3xl font-light" style={{ fontFamily: 'var(--font-serif)' }}>
           Apply for {role.title}
         </h2>
-        <p className="mt-4 text-sm leading-relaxed text-[#4A4A4A]">
-          The Worker stores the application securely, alerts our recruiting team in Telegram, and the Mini mailer sends the durable email from our own mail server.
-        </p>
       </div>
 
       <fieldset className="mb-8 border-t border-[#C8B9A6]/40 pt-6">

@@ -16,6 +16,9 @@ assert.doesNotMatch(source, /Please accept the required privacy consent before s
 assert.doesNotMatch(source, /I&apos;d also like to receive occasional updates/)
 assert.doesNotMatch(source, /also like to receive occasional updates/)
 assert.doesNotMatch(source, /We delete your application data within 28 days/)
+assert.doesNotMatch(source, /The Worker stores the application securely, alerts our recruiting team in Telegram, and the Mini mailer sends the durable email from our own mail server\./)
+assert.match(source, /Secure application/)
+assert.match(source, /Apply for \{role\.title\}/)
 
 const privacy = readFileSync(new URL('../app/privacy-policy/page.tsx', import.meta.url), 'utf8')
 assert.match(privacy, /Controller: PT Next Gen Home, Bali, Indonesia\. These roles are based in Indonesia and this careers page is not specifically directed at residents of the EU\. Contact: info@nghpropertygroup\.com\./)
