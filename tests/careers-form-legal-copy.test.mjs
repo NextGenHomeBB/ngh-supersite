@@ -44,8 +44,10 @@ assert.equal(existsSync(new URL('../public/images/steven-tan-a-kiam.jpeg', impor
 
 const careersConfig = readFileSync(new URL('../data/careers.ts', import.meta.url), 'utf8')
 assert.match(careersConfig, /roleCode: 'OPM'/)
-assert.match(careersConfig, /roleCode: 'FSD'/)
-assert.match(careersConfig, /roleCode: 'GEN'/)
+assert.doesNotMatch(careersConfig, /roleCode: 'FSD'/)
+assert.doesNotMatch(careersConfig, /roleCode: 'GEN'/)
+assert.doesNotMatch(careersConfig, /full-stack-developer/)
+assert.doesNotMatch(careersConfig, /open-application/)
 assert.match(careersConfig, /roleCode: string/)
 
 const headersUrl = new URL('../public/_headers', import.meta.url)
