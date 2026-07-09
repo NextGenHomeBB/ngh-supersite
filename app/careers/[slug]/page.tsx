@@ -59,15 +59,6 @@ export default async function CareerDetailPage({ params }: { params: CareerPageP
       <section className="px-6 py-16 lg:px-8 lg:py-24">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.85fr_1.15fr]">
           <aside className="space-y-8">
-            {role.roleOverview ? (
-              <div className="rounded-3xl border border-[#C8B9A6]/40 bg-white/70 p-6 shadow-sm">
-                <h2 className="mb-4 text-2xl font-light" style={{ fontFamily: 'var(--font-serif)' }}>
-                  The Role
-                </h2>
-                <p className="text-sm leading-relaxed text-[#4A4A4A]">{role.roleOverview}</p>
-              </div>
-            ) : null}
-
             {role.responsibilities ? (
               <div className="rounded-3xl border border-[#C8B9A6]/40 bg-white/70 p-6 shadow-sm">
                 <h2 className="mb-4 text-2xl font-light" style={{ fontFamily: 'var(--font-serif)' }}>
