@@ -111,6 +111,7 @@ export const careerRoles: CareerRole[] = [
       'Excellent typography, layout, and visual design skills.',
       'Strong attention to detail and a refined aesthetic.',
       'Professional working proficiency in English.',
+      'Based in or eligible to work in Indonesia.',
     ],
     niceToHave: [
       'Motion design and micro-interaction experience.',
@@ -290,6 +291,14 @@ export const careerRoles: CareerRole[] = [
         type: 'textarea',
         section: 'AI & tools',
         required: true,
+      },
+      {
+        id: 'indonesiaWorkEligibility',
+        label: 'Are you eligible to work in Indonesia?',
+        type: 'select',
+        section: 'Work style & availability',
+        required: true,
+        options: ['Yes', 'No'],
       },
       {
         id: 'internationalRemoteTeams',
