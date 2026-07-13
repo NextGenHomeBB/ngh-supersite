@@ -88,3 +88,120 @@ h1, h2, h3 {
   margin-bottom: 2rem;
   overflow: hidden;
 }
+
+/* ── Insights article body (CMS-authored HTML) ──
+   Scoped styling so semantic HTML from the editor renders on-brand,
+   matching the original hand-built article design. */
+.ngh-article {
+  color: #D4D0C8;
+}
+.ngh-article .ngh-lead {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 1.25rem;
+  line-height: 1.7;
+  color: #F5F3EE;
+  margin-bottom: 2rem;
+}
+.ngh-article h2 {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 1.5rem;
+  color: #F5F3EE;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+}
+.ngh-article h3 {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 1.25rem;
+  color: #F5F3EE;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+.ngh-article p {
+  color: #D4D0C8;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+.ngh-article ul,
+.ngh-article ol {
+  margin-bottom: 2rem;
+  padding-left: 1.25rem;
+}
+.ngh-article ul { list-style: none; padding-left: 0; }
+.ngh-article ol { list-style: decimal; }
+.ngh-article li {
+  color: #D4D0C8;
+  line-height: 1.7;
+  margin-bottom: 0.75rem;
+}
+.ngh-article strong { color: #F5F3EE; font-weight: 600; }
+.ngh-article em { font-style: italic; }
+.ngh-article a {
+  color: #C6A96C;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 0.3s ease;
+}
+.ngh-article a:hover { opacity: 0.8; }
+.ngh-article blockquote {
+  border-left: 2px solid #C6A96C;
+  padding-left: 1.25rem;
+  margin: 2rem 0;
+  color: #F5F3EE;
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+.ngh-article img {
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  margin: 2rem 0;
+}
+.ngh-article figure { margin: 2rem 0; }
+.ngh-article figcaption {
+  font-size: 0.8rem;
+  color: #8A8F83;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+/* Callout box (gold-tinted) for highlighted content */
+.ngh-article .callout {
+  background-color: rgba(198, 169, 108, 0.1);
+  border: 1px solid rgba(198, 169, 108, 0.2);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+/* CTA block */
+.ngh-article .cta-lead {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(198, 169, 108, 0.2);
+  font-size: 0.875rem;
+  color: #8A8F83;
+  margin-bottom: 1rem;
+}
+.ngh-article .cta-button {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  background-color: #C6A96C;
+  color: #1F1F1F;
+  transition: opacity 0.3s ease;
+}
+.ngh-article .cta-button:hover { opacity: 0.9; }
+/* Author sign-off block */
+.ngh-article .signoff {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(198, 169, 108, 0.2);
+}
+.ngh-article .signoff-name { color: #F5F3EE; margin-bottom: 0.5rem; }
+.ngh-article .signoff-role { font-size: 0.875rem; color: #8A8F83; margin-bottom: 1.5rem; }
+.ngh-article .disclaimer { font-size: 0.875rem; color: #8A8F83; line-height: 1.7; }
