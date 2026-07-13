@@ -24,6 +24,7 @@ export type CareerRole = {
   summary?: string[]
   responsibilities?: string[]
   requirements: string[]
+  niceToHave?: string[]
   offer?: string[]
   howToApply?: string
   closingDate: string
@@ -75,6 +76,73 @@ export const lockedCoreQuestions: CareerQuestion[] = [
 ]
 
 export const careerRoles: CareerRole[] = [
+  {
+    slug: 'ux-web-designer',
+    title: 'UX & Web Designer',
+    department: 'Design',
+    location: 'Uluwatu, Bali based (Hybrid)',
+    type: 'Contract',
+    status: 'open',
+    closingDate: '2026-08-31',
+    roleCode: 'UWD',
+    description:
+      "We're looking for a talented UX & Web Designer to elevate our digital presence. You'll design intuitive, visually refined experiences across our corporate website, project landing pages, and investor-facing platforms.",
+    summary: [
+      "We're looking for a talented UX & Web Designer to elevate our digital presence. You'll be responsible for designing intuitive, visually refined experiences across our corporate website, project landing pages, and investor-facing platforms.",
+      "Working closely with the CEO and marketing team, you'll transform ideas into premium digital experiences that strengthen our brand and support business growth.",
+    ],
+    responsibilities: [
+      'Design, improve, and maintain the NGH corporate website and project landing pages.',
+      'Create user flows, wireframes, prototypes, and high-fidelity UI designs.',
+      'Ensure seamless, responsive experiences across desktop, tablet, and mobile devices.',
+      'Design intuitive investor dashboards and client portals.',
+      'Produce digital assets including email templates, presentation decks, and marketing visuals.',
+      'Maintain consistency across all digital brand touchpoints.',
+      'Continuously improve user experience through analytics, testing, and user feedback.',
+      'Collaborate closely with developers to ensure accurate implementation of designs.',
+    ],
+    requirements: [
+      'Minimum 3 years of experience in UX/UI or web design.',
+      'Strong portfolio demonstrating high-quality digital work, with real estate, hospitality, luxury, or lifestyle brand experience as a plus.',
+      'Proficiency in Figma, Adobe Creative Suite, and prototyping tools.',
+      'Solid understanding of responsive design principles and user-centered design.',
+      'Working knowledge of HTML/CSS, with coding ability considered an advantage, not a requirement.',
+      'Experience with WordPress, Webflow, or similar CMS platforms.',
+      'Excellent typography, layout, and visual design skills.',
+      'Strong attention to detail and a refined aesthetic.',
+      'Professional working proficiency in English.',
+    ],
+    niceToHave: [
+      'Motion design and micro-interaction experience.',
+      'Knowledge of SEO and conversion-focused web design.',
+      'Experience creating investor presentations or sales materials.',
+      'Familiarity with AI-powered design tools and workflows.',
+    ],
+    offer: [
+      'Competitive freelance compensation.',
+      'Flexible hybrid working arrangement.',
+      'Opportunity to work directly with the leadership team.',
+      "A chance to shape the digital experience of one of Bali's growing property developers.",
+      'Creative freedom on premium property and investment projects.',
+    ],
+    howToApply: 'Send your CV, portfolio link, and a short motivation to the NGH Property Group team.',
+    extraQuestions: [
+      {
+        id: 'portfolioHighlights',
+        label: 'Share 2 to 3 portfolio examples that best match premium real estate, hospitality, luxury, or lifestyle design. What was your role in each project?',
+        type: 'textarea',
+        section: 'Role-specific questions',
+        required: true,
+      },
+      {
+        id: 'websiteImprovementApproach',
+        label: 'If you were improving a premium property landing page, what would you review first and why?',
+        type: 'textarea',
+        section: 'Role-specific questions',
+        required: true,
+      },
+    ],
+  },
   {
     slug: 'operations-planning-manager',
     title: 'Operations & Planning Manager',

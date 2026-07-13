@@ -89,6 +89,22 @@ export default async function CareerDetailPage({ params }: { params: CareerPageP
               </ul>
             </div>
 
+            {role.niceToHave ? (
+              <div className="rounded-3xl border border-[#C8B9A6]/40 bg-white/70 p-6 shadow-sm">
+                <h2 className="mb-4 text-2xl font-light" style={{ fontFamily: 'var(--font-serif)' }}>
+                  Nice To Have
+                </h2>
+                <ul className="space-y-3 text-sm leading-relaxed text-[#4A4A4A]">
+                  {role.niceToHave.map((item) => (
+                    <li key={item} className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-[#C6A96C]" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
             {role.offer ? (
               <div className="rounded-3xl border border-[#C8B9A6]/40 bg-white/70 p-6 shadow-sm">
                 <h2 className="mb-4 text-2xl font-light" style={{ fontFamily: 'var(--font-serif)' }}>
