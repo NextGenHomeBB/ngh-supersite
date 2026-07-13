@@ -13,6 +13,11 @@
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+// This project uses the new API key system, so the injected service-role key is
+// the `sb_secret_` format. PostgREST accepts it, but the Storage API's Bearer
+// parser requires a real JWT. STORAGE_JWT holds the legacy service-role JWT for
+// storage calls; falls back to SERVICE_ROLE on classic projects.
+const STORAGE_JWT = Deno.env.get("STORAGE_SERVICE_JWT") || SERVICE_ROLE;
 
 // Function secrets (set via `supabase secrets set`).
 const DEPLOY_TOKEN = Deno.env.get("SUPERSITE_DEPLOY_TOKEN") || "";
@@ -240,7 +245,7 @@ Deno.serve(async (req) => {
     if (!(file instanceof File)) return json({ ok: false, error: "no_file" }, 400, origin);
     const okTypes: Record<string, string> = {
       "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp",
-      "image/gif": "gif", "image/avif": "avif",
+      "image/avif": "avif",
     };
     const ext = okTypes[file.type];
     if (!ext) return json({ ok: false, error: "unsupported_type" }, 400, origin);
@@ -249,7 +254,8 @@ Deno.serve(async (req) => {
     const up = await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${SERVICE_ROLE}`,
+        apikey: STORAGE_JWT,
+        Authorization: `Bearer ${STORAGE_JWT}`,
         "Content-Type": file.type,
         "x-upsert": "true",
       },
