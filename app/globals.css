@@ -205,3 +205,18 @@ h1, h2, h3 {
 .ngh-article .signoff-name { color: #F5F3EE; margin-bottom: 0.5rem; }
 .ngh-article .signoff-role { font-size: 0.875rem; color: #8A8F83; margin-bottom: 1.5rem; }
 .ngh-article .disclaimer { font-size: 0.875rem; color: #8A8F83; line-height: 1.7; }
+
+/* ── /admin TipTap editor surface ─────────────────────────────────────────── */
+.ngh-editor-body { max-width: none; }
+.ngh-editor-body:focus { outline: none; }
+.ngh-editor-body .ProseMirror { outline: none; }
+.ngh-editor-body p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: #5C6057;
+}
+.ngh-editor-body h2:first-child,
+.ngh-editor-body h3:first-child { margin-top: 0; }
+.ngh-editor-body img.ProseMirror-selectednode { outline: 2px solid #C6A96C; }
