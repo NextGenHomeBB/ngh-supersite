@@ -32,6 +32,7 @@ declare global {
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_CAREERS_API_BASE_URL || 'https://apply.nghpropertygroup.com'
 const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAADxWtmNSBt1hDWg6'
+const introVideoMaxBytes = 20 * 1024 * 1024
 
 function groupQuestions(questions: CareerQuestion[]) {
   return questions.reduce<Record<string, CareerQuestion[]>>((groups, question) => {
@@ -124,6 +125,7 @@ export default function ApplicationForm({ role, questions }: { role: CareerRole;
 
       if (!(resume instanceof File) || resume.size === 0) throw new Error('Please upload your CV or resume.')
       if (!(introVideo instanceof File) || introVideo.size === 0) throw new Error('Please upload your intro video.')
+      if (introVideo.size > introVideoMaxBytes) throw new Error('Intro video must be 20MB or smaller.')
       if (!privacyAcknowledged) throw new Error('Please confirm you have read and understood the Privacy Notice before submitting.')
       if (!turnstileToken) throw new Error('Please complete the anti-bot verification.')
 
@@ -259,7 +261,7 @@ export default function ApplicationForm({ role, questions }: { role: CareerRole;
             <input name="resume" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required className={inputClass()} />
           </label>
           <label className="block text-sm font-medium">
-            Intro video, MP4/MOV/WEBM, max 100MB *
+            Intro video, MP4/MOV/WEBM, max 20MB *
             <input name="introVideo" type="file" accept=".mp4,.mov,.webm,video/mp4,video/quicktime,video/webm" required className={inputClass()} />
           </label>
         </div>

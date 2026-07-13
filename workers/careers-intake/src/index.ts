@@ -1,5 +1,5 @@
 import { getCareerRole, getRoleQuestions } from '../../../data/careers'
-import { isApplicationExpired, sanitizeFileName, validateUploadMagicBytes, validateUploadRequest, type UploadKind, type UploadRequest } from './security'
+import { RESUME_MAX_BYTES, VIDEO_MAX_BYTES, isApplicationExpired, sanitizeFileName, validateUploadMagicBytes, validateUploadRequest, type UploadKind, type UploadRequest } from './security'
 import { presignR2Url } from './presign'
 
 type Env = {
@@ -226,7 +226,7 @@ async function validateStoredUpload(env: Env, upload: FinalizeUpload) {
     await env.CAREERS_BUCKET.delete(upload.key)
     return requestValidation
   }
-  const expectedMax = upload.kind === 'resume' ? 10 * 1024 * 1024 : 100 * 1024 * 1024
+  const expectedMax = upload.kind === 'resume' ? RESUME_MAX_BYTES : VIDEO_MAX_BYTES
   if (object.size <= 0 || object.size > expectedMax) {
     await env.CAREERS_BUCKET.delete(upload.key)
     return { ok: false as const, error: `${upload.kind} upload has an invalid size.` }

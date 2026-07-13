@@ -10,7 +10,7 @@ export type UploadRequest = {
 export type ValidationResult = { ok: true } | { ok: false; error: string }
 
 export const RESUME_MAX_BYTES = 10 * 1024 * 1024
-export const VIDEO_MAX_BYTES = 100 * 1024 * 1024
+export const VIDEO_MAX_BYTES = 20 * 1024 * 1024
 export const RETENTION_DAYS_AFTER_ROLE_CLOSE = 28
 
 const resumeExtensions = ['.pdf', '.doc', '.docx']
@@ -42,7 +42,7 @@ export function validateUploadRequest(upload: UploadRequest): ValidationResult {
     return { ok: true }
   }
 
-  if (upload.size > VIDEO_MAX_BYTES) return { ok: false, error: 'Intro video must be 100MB or smaller.' }
+  if (upload.size > VIDEO_MAX_BYTES) return { ok: false, error: 'Intro video must be 20MB or smaller.' }
   if (!videoExtensions.some((extension) => name.endsWith(extension))) {
     return { ok: false, error: 'Intro video must be MP4, MOV, or WEBM.' }
   }

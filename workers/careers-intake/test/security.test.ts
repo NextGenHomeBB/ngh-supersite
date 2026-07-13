@@ -30,10 +30,10 @@ describe('careers intake security helpers', () => {
       validateUploadRequest({
         kind: 'introVideo',
         fileName: 'intro.mp4',
-        size: 101 * 1024 * 1024,
+        size: 21 * 1024 * 1024,
         contentType: 'video/mp4',
       }),
-    ).toEqual({ ok: false, error: 'Intro video must be 100MB or smaller.' })
+    ).toEqual({ ok: false, error: 'Intro video must be 20MB or smaller.' })
   })
 
   it('calculates expiry from role close date, not upload age', () => {
