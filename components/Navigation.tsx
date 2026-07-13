@@ -130,11 +130,11 @@ export default function Navigation() {
             className="relative z-10 flex-shrink-0"
           >
             <Image
-              src="/images/logo-gold.png"
-              alt="NGH Bali Property Group"
-              width={200}
-              height={70}
-              className="h-14 w-auto object-contain drop-shadow-[0_2px_12px_rgba(198,169,108,0.5)]"
+              src="/images/uluwatu-paradise-logo-header.png"
+              alt="Uluwatu Paradise"
+              width={80}
+              height={106}
+              className="h-16 w-auto object-contain drop-shadow-[0_2px_12px_rgba(198,169,108,0.5)]"
               priority
             />
           </a>
