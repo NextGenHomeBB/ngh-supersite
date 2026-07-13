@@ -233,7 +233,10 @@ Deno.serve(async (req) => {
   if (ct.includes("multipart/form-data")) {
     const form = await req.formData();
     const file = form.get("file");
-    const id = String(form.get("id") || "misc");
+    // Sanitize the client-supplied id before it enters the storage path — strip
+    // anything but [A-Za-z0-9_-] so it can't traverse out of articles/ (e.g. "../").
+    const rawId = String(form.get("id") || "misc");
+    const id = rawId.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 64) || "misc";
     if (!(file instanceof File)) return json({ ok: false, error: "no_file" }, 400, origin);
     const okTypes: Record<string, string> = {
       "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp",
