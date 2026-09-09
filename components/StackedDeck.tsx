@@ -20,6 +20,7 @@ interface StackedCard {
 interface StackedDeckProps {
   cards: StackedCard[]
   className?: string
+  href?: string
 }
 
 // ─── Brand tokens ────────────────────────────────────────────────────────────
@@ -42,6 +43,16 @@ const RESPONSIVE_CSS = `
       border-radius: 16px !important;
     }
   }
+
+  [data-ngh-card-link] {
+    display: block;
+    cursor: pointer;
+  }
+
+  [data-ngh-card-link]:focus-visible [data-ngh-card] {
+    outline: 3px solid #C6A96C;
+    outline-offset: 4px;
+  }
 `
 
 // ─── Single card ─────────────────────────────────────────────────────────────
@@ -50,15 +61,17 @@ function StackedCardItem({
   card,
   index,
   total,
+  href,
 }: {
   card: StackedCard
   index: number
   total: number
+  href?: string
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, amount: 0.3 })
 
-  return (
+  const cardContent = (
     <div
       ref={ref}
       data-ngh-card=""
@@ -294,11 +307,25 @@ function StackedCardItem({
       </div>
     </div>
   )
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        data-ngh-card-link=""
+        aria-label={`View listings for ${card.title}`}
+      >
+        {cardContent}
+      </a>
+    )
+  }
+
+  return cardContent
 }
 
 // ─── Main component ──────────────────────────────────────────────────────────
 
-export default function StackedDeck({ cards, className }: StackedDeckProps) {
+export default function StackedDeck({ cards, className, href }: StackedDeckProps) {
   return (
     <section
       className={className}
@@ -318,6 +345,7 @@ export default function StackedDeck({ cards, className }: StackedDeckProps) {
           card={card}
           index={i}
           total={cards.length}
+          href={href}
         />
       ))}
     </section>

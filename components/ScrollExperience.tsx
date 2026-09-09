@@ -1376,7 +1376,10 @@ export default function ScrollExperience() {
           </FadeIn>
         </div>
 
-        <StackedDeckComponent cards={stackCards} />
+        <StackedDeckComponent
+          cards={stackCards}
+          href="https://listings.nghpropertygroup.com"
+        />
       </section>
 
       {/* ── STATS BAR ── */}
