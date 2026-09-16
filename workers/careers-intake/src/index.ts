@@ -170,10 +170,23 @@ function isSessionExpired(createdAt: string, now = new Date()) {
 // generate a reference, and set the 28-day delete clock. Add a line here to
 // open a role, adjust closingDate to retire it. Roles still defined in the
 // legacy data/careers.ts continue to work via the fallback in resolveRole.
+//
+// EVERY role the public site advertises must have a line here, or its applicants
+// are turned away at /uploads/presign with "This role is not open for
+// applications." — before they ever reach Turnstile, and with no trace anywhere
+// except the error in their own browser. `full-stack-developer` and
+// `sales-representative` shipped on nghpropertygroup.com/career without one and
+// rejected every applicant until 2026-09-16; only `admin-finance-assistant` was
+// ever registered here, so the failure was invisible from the one role anybody
+// tested. The listing is in components/sections/career/rolesData.ts in the
+// ngh-website-2026 repo — when a role is added there, add it here in the same
+// change.
 type ResolvedRole = { slug: string; title: string; roleCode: string; closingDate: string }
 
 const OPEN_ROLES: ResolvedRole[] = [
   { slug: 'admin-finance-assistant', title: 'Admin & Finance Assistant', roleCode: 'AFA', closingDate: '2026-10-31' },
+  { slug: 'full-stack-developer', title: 'Junior Full-Stack Developer', roleCode: 'JFD', closingDate: '2026-09-30' },
+  { slug: 'sales-representative', title: 'Sales Representative', roleCode: 'SRE', closingDate: '2026-09-30' },
 ]
 
 function todayInBali(now = new Date()) {
