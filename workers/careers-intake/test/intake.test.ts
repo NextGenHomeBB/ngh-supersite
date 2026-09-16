@@ -132,6 +132,52 @@ describe('intake Worker hardening', () => {
     await expect(response.json()).resolves.toEqual({ error: 'This role is not open for applications.' })
   })
 
+  // Guards the failure this Worker actually shipped: `full-stack-developer` and
+  // `sales-representative` were advertised on nghpropertygroup.com/career while
+  // OPEN_ROLES held only `admin-finance-assistant`, so both rejected every
+  // applicant at the presign step. Nothing caught it, because the one role
+  // anybody tested was the one that was registered. If a slug here fails, the
+  // public page is advertising a role the Worker will turn away.
+  it.each(['admin-finance-assistant', 'full-stack-developer', 'sales-representative'])(
+    'accepts upload preparation for advertised role %s',
+    async (roleSlug) => {
+      vi.setSystemTime(new Date('2026-09-16T12:00:00.000Z'))
+      const response = await worker.fetch(
+        jsonRequest('/uploads/presign', {
+          appId,
+          roleSlug,
+          turnstileToken: 'test-token',
+          files: [
+            { kind: 'resume', fileName: 'candidate.pdf', size: 1000, contentType: 'application/pdf' },
+            { kind: 'introVideo', fileName: 'intro.mp4', size: 1000, contentType: 'video/mp4' },
+          ],
+        }),
+        testEnv() as never,
+      )
+
+      expect(response.status).toBe(200)
+    },
+  )
+
+  it('still turns away a slug that is not registered at all', async () => {
+    vi.setSystemTime(new Date('2026-09-16T12:00:00.000Z'))
+    const response = await worker.fetch(
+      jsonRequest('/uploads/presign', {
+        appId,
+        roleSlug: 'not-a-real-role',
+        turnstileToken: 'test-token',
+        files: [
+          { kind: 'resume', fileName: 'candidate.pdf', size: 1000, contentType: 'application/pdf' },
+          { kind: 'introVideo', fileName: 'intro.mp4', size: 1000, contentType: 'video/mp4' },
+        ],
+      }),
+      testEnv() as never,
+    )
+
+    expect(response.status).toBe(400)
+    await expect(response.json()).resolves.toEqual({ error: 'This role is not open for applications.' })
+  })
+
   it('sets no-referrer on normal JSON responses', async () => {
     const response = await worker.fetch(new Request('https://intake.test/health'), testEnv() as never)
     expect(response.status).toBe(200)
