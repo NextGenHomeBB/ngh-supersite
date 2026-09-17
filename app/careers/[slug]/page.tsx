@@ -119,7 +119,7 @@ export default async function CareerDetailPage({ params }: { params: CareerPageP
                 Application package
               </h2>
               <p className="text-sm leading-relaxed text-[#D4D0C8]">
-                Submit the NGH questionnaire, your CV, and a short intro video in one secure application flow. We delete your application data within 28 days after the role is filled or closed.
+                Submit the NGH questionnaire, your CV, and a short intro video in one secure application flow. We keep your application for up to 12 months after the role is filled or closed so we can consider you for other roles, and delete it after that. Ask us any time and we will delete it sooner.
               </p>
             </div>
           </aside>

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   addDaysUtc,
   isApplicationExpired,
+  RETENTION_DAYS_AFTER_ROLE_CLOSE,
   validateUploadMagicBytes,
   validateUploadRequest,
 } from '../src/security'
@@ -37,8 +38,18 @@ describe('careers intake security helpers', () => {
   })
 
   it('calculates expiry from role close date, not upload age', () => {
-    expect(isApplicationExpired('2026-07-01', new Date('2026-07-29T00:00:00Z'))).toBe(false)
-    expect(isApplicationExpired('2026-07-01', new Date('2026-07-30T00:00:00Z'))).toBe(true)
+    const lastDayKept = addDaysUtc('2026-07-01', RETENTION_DAYS_AFTER_ROLE_CLOSE)
+    const dayAfter = addDaysUtc('2026-07-01', RETENTION_DAYS_AFTER_ROLE_CLOSE + 1)
+    expect(isApplicationExpired('2026-07-01', lastDayKept)).toBe(false)
+    expect(isApplicationExpired('2026-07-01', dayAfter)).toBe(true)
+  })
+
+  // The retention period is a promise printed on the application form and in the privacy
+  // policy, so it must not be quietly retuned. If this fails, the two public texts need the
+  // same edit in the same commit: components/sections/career/ApplicationForm.tsx in
+  // ngh-website-2026, and app/privacy-policy/page.tsx in this repo.
+  it('keeps the retention period at the value stated in the public copy', () => {
+    expect(RETENTION_DAYS_AFTER_ROLE_CLOSE).toBe(365)
   })
 
   it('adds days in UTC without local timezone drift', () => {

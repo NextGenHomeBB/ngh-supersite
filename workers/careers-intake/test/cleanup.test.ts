@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { cleanupExpiredApplications } from '../src/index'
+import { addDaysUtc, RETENTION_DAYS_AFTER_ROLE_CLOSE } from '../src/security'
 
 type StoredObject = { key: string; body: unknown }
 
@@ -49,7 +50,10 @@ describe('scheduled retention cleanup', () => {
 
     const deleted = await cleanupExpiredApplications(
       { CAREERS_BUCKET: bucket } as never,
-      new Date('2026-07-30T00:00:00Z'),
+      // One day past the retention period for the 2026-07-01 role. Derived from the
+      // constant rather than hard-coded, so changing the retention period cannot leave
+      // this test asserting a window we no longer use.
+      addDaysUtc('2026-07-01', RETENTION_DAYS_AFTER_ROLE_CLOSE + 1),
     )
 
     expect(deleted).toBe(1)

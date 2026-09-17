@@ -1,4 +1,4 @@
-import { getCareerRole, getRoleQuestions, isRoleOpenForApplications } from '../../../data/careers'
+import { getCareerRole, isRoleOpenForApplications } from '../../../data/careers'
 import { isApplicationExpired, sanitizeFileName, validateUploadMagicBytes, validateUploadRequest, type UploadKind, type UploadRequest } from './security'
 import { presignR2Url } from './presign'
 
@@ -164,13 +164,55 @@ function isSessionExpired(createdAt: string, now = new Date()) {
   return Number.isNaN(created) || created + SESSION_EXPIRES_SECONDS * 1000 < now.getTime()
 }
 
+// Worker-owned registry of currently-open roles for the redesigned site
+// (ngh-website-2026). The per-role question schema lives in the frontend and
+// varies per role; the Worker only needs enough to gate the submission,
+// generate a reference, and set the 28-day delete clock. Add a line here to
+// open a role, adjust closingDate to retire it. Roles still defined in the
+// legacy data/careers.ts continue to work via the fallback in resolveRole.
+//
+// EVERY role the public site advertises must have a line here, or its applicants
+// are turned away at /uploads/presign with "This role is not open for
+// applications." — before they ever reach Turnstile, and with no trace anywhere
+// except the error in their own browser. `full-stack-developer` and
+// `sales-representative` shipped on nghpropertygroup.com/career without one and
+// rejected every applicant until 2026-09-16; only `admin-finance-assistant` was
+// ever registered here, so the failure was invisible from the one role anybody
+// tested. The listing is in components/sections/career/rolesData.ts in the
+// ngh-website-2026 repo — when a role is added there, add it here in the same
+// change.
+type ResolvedRole = { slug: string; title: string; roleCode: string; closingDate: string }
+
+const OPEN_ROLES: ResolvedRole[] = [
+  { slug: 'admin-finance-assistant', title: 'Admin & Finance Assistant', roleCode: 'AFA', closingDate: '2026-10-31' },
+  { slug: 'full-stack-developer', title: 'Junior Full-Stack Developer', roleCode: 'JFD', closingDate: '2026-09-30' },
+  { slug: 'sales-representative', title: 'Sales Representative', roleCode: 'SRE', closingDate: '2026-09-30' },
+]
+
+function todayInBali(now = new Date()) {
+  // Bali is UTC+8; compare closingDate (YYYY-MM-DD) lexicographically.
+  return new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString().slice(0, 10)
+}
+
+function resolveRole(roleSlug: string, now = new Date()): ResolvedRole | null {
+  const registered = OPEN_ROLES.find((role) => role.slug === roleSlug)
+  if (registered) {
+    return registered.closingDate >= todayInBali(now) ? registered : null
+  }
+  const legacy = getCareerRole(roleSlug)
+  if (legacy && isRoleOpenForApplications(legacy, now)) {
+    return { slug: legacy.slug, title: legacy.title, roleCode: legacy.roleCode, closingDate: legacy.closingDate }
+  }
+  return null
+}
+
 async function handlePresign(request: Request, env: Env) {
   const body = await readJson<{ appId: string; roleSlug: string; turnstileToken: string; files: PresignFile[] }>(request)
   const appId = requireString(body.appId, 'appId')
   if (!APP_ID_RE.test(appId)) return badRequest('Invalid application ID.', env)
   const roleSlug = requireString(body.roleSlug, 'roleSlug')
-  const role = getCareerRole(roleSlug)
-  if (!role || !isRoleOpenForApplications(role)) return badRequest('This role is not open for applications.', env)
+  const role = resolveRole(roleSlug)
+  if (!role) return badRequest('This role is not open for applications.', env)
   const turnstileToken = requireString(body.turnstileToken, 'turnstileToken')
   const turnstile = await verifyTurnstile(turnstileToken, request, env)
   if (!turnstile.ok) return badRequest('Anti-bot verification failed.', env, 403)
@@ -242,23 +284,16 @@ async function validateStoredUpload(env: Env, upload: FinalizeUpload) {
 }
 
 function validateAnswers(roleSlug: string, body: FinalizeBody) {
-  const role = getCareerRole(roleSlug)
-  if (!role || !isRoleOpenForApplications(role)) return 'This role is not open for applications.'
-  const requiredQuestionIds = new Set(getRoleQuestions(role).filter((question) => question.required).map((question) => question.id))
-  const answered = new Set(
-    body.answers
-      .filter((answer) => Array.isArray(answer.value) ? answer.value.length > 0 : String(answer.value || '').trim().length > 0)
-      .map((answer) => answer.id),
-  )
-  for (const id of requiredQuestionIds) {
-    if (!answered.has(id)) return `Required question is missing: ${id}`
-  }
+  // The per-role question schema now lives in the frontend (roles vary per
+  // position; the workflow is constant). The Worker no longer cross-checks
+  // required question ids — it trusts the form's own required enforcement and
+  // stores every answer. It still enforces the minimal identity fields it
+  // needs to contact the applicant, plus explicit consent.
+  if (!resolveRole(roleSlug)) return 'This role is not open for applications.'
   const requiredCandidateFields: Array<[string, string]> = [
     ['name', 'name'],
-    ['dateOfBirth', 'date of birth'],
     ['email', 'email'],
     ['phone', 'phone'],
-    ['location', 'location'],
   ]
   for (const [field, label] of requiredCandidateFields) {
     if (!body.candidate?.[field]?.trim()) return `Candidate ${label} is required.`
@@ -316,8 +351,8 @@ async function handleFinalize(request: Request, env: Env) {
   const appId = requireString(body.appId, 'appId')
   if (!APP_ID_RE.test(appId)) return badRequest('Invalid application ID.', env)
   const roleSlug = requireString(body.roleSlug, 'roleSlug')
-  const role = getCareerRole(roleSlug)
-  if (!role || !isRoleOpenForApplications(role)) return badRequest('This role is not open for applications.', env)
+  const role = resolveRole(roleSlug)
+  if (!role) return badRequest('This role is not open for applications.', env)
   const answerError = validateAnswers(roleSlug, body)
   if (answerError) return badRequest(answerError, env)
 
@@ -359,7 +394,7 @@ async function handleFinalize(request: Request, env: Env) {
     roleCode: role.roleCode,
     roleSlug,
     applicantName: body.candidate.name,
-    applicantDateOfBirth: body.candidate.dateOfBirth,
+    applicantDateOfBirth: body.candidate.dateOfBirth ?? null,
     applicantEmail: body.candidate.email,
     applicantPhone: body.candidate.phone,
     answers,
