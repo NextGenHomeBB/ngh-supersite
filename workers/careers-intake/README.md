@@ -9,7 +9,7 @@ Secure intake bridge for `nghpropertygroup.com/careers`.
 3. Browser uploads resume and intro video directly to private R2.
 4. Frontend calls `POST /applications` with candidate data, questionnaire answers, and uploaded object keys.
 5. Worker checks uploaded objects, validates magic bytes and hard size caps, stores `metadata.json`, and sends a secondary Telegram ping with role only. The Mini mailer reads R2 and sends the durable email from the NGH mail server.
-6. Daily Cron deletes `applications/{appId}/` after `role_close_date + 28 days < today`.
+6. Daily Cron deletes `applications/{appId}/` after `role_close_date + RETENTION_DAYS_AFTER_ROLE_CLOSE < today` (12 months since 2026-09-17, was 28 days).
 
 ## Production secrets Dev must provision
 
@@ -38,5 +38,5 @@ Public frontend variable:
 - Worker stores `metadata.json` at `applications/<appId>/metadata.json` with SETUP.md fields, CV key, and intro-video link.
 - Telegram notification is secondary and contains only the role title, no candidate PII.
 - The Mini mailer reads R2 with a read-only token and sends the full email through the NGH mail server.
-- Required consent text: `I consent to NGH Property Group processing my application data for recruitment purposes. We delete your application data within 28 days after the role is filled or closed.`
-- No optional retention consent and no `keep me on file` branch.
+- Retention notice shown to the candidate: `We keep your application for up to 12 months after the role is closed or filled, so we can consider you for other roles. After that it is deleted automatically. Email info@nghpropertygroup.com any time and we will delete it sooner.` It appears on the application form and, in fuller form, in the privacy policy. The consent checkbox itself covers background and reference checks, not retention.
+- Changing the retention period means changing three things in one go: `RETENTION_DAYS_AFTER_ROLE_CLOSE` in `src/security.ts`, `components/sections/career/ApplicationForm.tsx` in ngh-website-2026, and `app/privacy-policy/page.tsx` in this repo. A test in `test/security.test.ts` fails if the constant moves, so the copy cannot silently drift away from what the Worker actually does.
