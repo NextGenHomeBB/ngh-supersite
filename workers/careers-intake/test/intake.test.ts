@@ -159,6 +159,37 @@ describe('intake Worker hardening', () => {
     },
   )
 
+  // The test above froze the clock at 2026-09-16, a date on which every role was
+  // still open, so it could only ever catch a missing line in OPEN_ROLES. It went
+  // on passing while `full-stack-developer` and `sales-representative` expired on
+  // 2026-09-30 and turned away every applicant from 1 to 18 October 2026 — the
+  // slugs were registered, so the assertion it makes was true and useless.
+  //
+  // This one deliberately uses the real clock. If it fails, a role the public page
+  // still advertises has passed its closingDate, and that is exactly the moment
+  // somebody needs to decide whether to extend the date or take the form down.
+  // Failing the build is the intended behaviour, not a flake to pin to a date.
+  it.each(['admin-finance-assistant', 'full-stack-developer', 'sales-representative'])(
+    'still accepts advertised role %s at the current date',
+    async (roleSlug) => {
+      vi.useRealTimers()
+      const response = await worker.fetch(
+        jsonRequest('/uploads/presign', {
+          appId,
+          roleSlug,
+          turnstileToken: 'test-token',
+          files: [
+            { kind: 'resume', fileName: 'candidate.pdf', size: 1000, contentType: 'application/pdf' },
+            { kind: 'introVideo', fileName: 'intro.mp4', size: 1000, contentType: 'video/mp4' },
+          ],
+        }),
+        testEnv() as never,
+      )
+
+      expect(response.status).toBe(200)
+    },
+  )
+
   it('still turns away a slug that is not registered at all', async () => {
     vi.setSystemTime(new Date('2026-09-16T12:00:00.000Z'))
     const response = await worker.fetch(

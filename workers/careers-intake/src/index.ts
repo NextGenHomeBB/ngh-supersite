@@ -181,12 +181,20 @@ function isSessionExpired(createdAt: string, now = new Date()) {
 // tested. The listing is in components/sections/career/rolesData.ts in the
 // ngh-website-2026 repo — when a role is added there, add it here in the same
 // change.
+//
+// A registered role fails exactly the same way once its closingDate passes, and
+// that is the harder version to spot: the line is present, so the allowlist looks
+// correct. `full-stack-developer` and `sales-representative` closed on 2026-09-30
+// while both were still advertised, and every applicant from 1 to 18 October was
+// turned away with the same message and left no record. The dates here and in
+// rolesData.ts must move together, and a role must never outlive its date on the
+// public page.
 type ResolvedRole = { slug: string; title: string; roleCode: string; closingDate: string }
 
 const OPEN_ROLES: ResolvedRole[] = [
   { slug: 'admin-finance-assistant', title: 'Admin & Finance Assistant', roleCode: 'AFA', closingDate: '2026-10-31' },
-  { slug: 'full-stack-developer', title: 'Junior Full-Stack Developer', roleCode: 'JFD', closingDate: '2026-09-30' },
-  { slug: 'sales-representative', title: 'Sales Representative', roleCode: 'SRE', closingDate: '2026-09-30' },
+  { slug: 'full-stack-developer', title: 'Junior Full-Stack Developer', roleCode: 'JFD', closingDate: '2026-10-31' },
+  { slug: 'sales-representative', title: 'Sales Representative', roleCode: 'SRE', closingDate: '2026-10-31' },
 ]
 
 function todayInBali(now = new Date()) {
