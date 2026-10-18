@@ -138,7 +138,7 @@ describe('intake Worker hardening', () => {
   // applicant at the presign step. Nothing caught it, because the one role
   // anybody tested was the one that was registered. If a slug here fails, the
   // public page is advertising a role the Worker will turn away.
-  it.each(['admin-finance-assistant', 'full-stack-developer', 'sales-representative'])(
+  it.each(['full-stack-developer'])(
     'accepts upload preparation for advertised role %s',
     async (roleSlug) => {
       vi.setSystemTime(new Date('2026-09-16T12:00:00.000Z'))
@@ -169,7 +169,7 @@ describe('intake Worker hardening', () => {
   // still advertises has passed its closingDate, and that is exactly the moment
   // somebody needs to decide whether to extend the date or take the form down.
   // Failing the build is the intended behaviour, not a flake to pin to a date.
-  it.each(['admin-finance-assistant', 'full-stack-developer', 'sales-representative'])(
+  it.each(['full-stack-developer'])(
     'still accepts advertised role %s at the current date',
     async (roleSlug) => {
       vi.useRealTimers()
@@ -187,6 +187,33 @@ describe('intake Worker hardening', () => {
       )
 
       expect(response.status).toBe(200)
+    },
+  )
+
+  // Drift runs both ways. On 2026-10-18 this list still carried
+  // `sales-representative`, retired from rolesData.ts on 2026-10-09, and
+  // `admin-finance-assistant`, marked applicationStatus "closed" there — so the
+  // Worker was accepting CVs and intro videos for two vacancies the site no
+  // longer offers. A withdrawn role must be withdrawn in both halves.
+  it.each(['sales-representative', 'admin-finance-assistant'])(
+    'turns away withdrawn role %s',
+    async (roleSlug) => {
+      vi.useRealTimers()
+      const response = await worker.fetch(
+        jsonRequest('/uploads/presign', {
+          appId,
+          roleSlug,
+          turnstileToken: 'test-token',
+          files: [
+            { kind: 'resume', fileName: 'candidate.pdf', size: 1000, contentType: 'application/pdf' },
+            { kind: 'introVideo', fileName: 'intro.mp4', size: 1000, contentType: 'video/mp4' },
+          ],
+        }),
+        testEnv() as never,
+      )
+
+      expect(response.status).toBe(400)
+      await expect(response.json()).resolves.toEqual({ error: 'This role is not open for applications.' })
     },
   )
 

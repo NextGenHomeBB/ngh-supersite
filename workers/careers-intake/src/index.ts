@@ -184,17 +184,21 @@ function isSessionExpired(createdAt: string, now = new Date()) {
 //
 // A registered role fails exactly the same way once its closingDate passes, and
 // that is the harder version to spot: the line is present, so the allowlist looks
-// correct. `full-stack-developer` and `sales-representative` closed on 2026-09-30
-// while both were still advertised, and every applicant from 1 to 18 October was
-// turned away with the same message and left no record. The dates here and in
-// rolesData.ts must move together, and a role must never outlive its date on the
-// public page.
+// correct. `full-stack-developer` closed here on 2026-09-30 while it was still
+// advertised, and every applicant from 1 to 18 October was turned away with the
+// same message and left no record. The dates here and in rolesData.ts must move
+// together, and a role must never outlive its date on the public page.
+//
+// The reverse drift is just as real and was live on 2026-10-18: this list still
+// carried `sales-representative`, retired from the site on 2026-10-09, and
+// `admin-finance-assistant`, marked applicationStatus "closed" there. A slug left
+// open here after the vacancy is withdrawn keeps accepting CVs and intro videos
+// for a job that no longer exists. Removing the role from rolesData.ts is half the
+// change; the other half is here.
 type ResolvedRole = { slug: string; title: string; roleCode: string; closingDate: string }
 
 const OPEN_ROLES: ResolvedRole[] = [
-  { slug: 'admin-finance-assistant', title: 'Admin & Finance Assistant', roleCode: 'AFA', closingDate: '2026-10-31' },
   { slug: 'full-stack-developer', title: 'Junior Full-Stack Developer', roleCode: 'JFD', closingDate: '2026-10-31' },
-  { slug: 'sales-representative', title: 'Sales Representative', roleCode: 'SRE', closingDate: '2026-10-31' },
 ]
 
 function todayInBali(now = new Date()) {
