@@ -138,7 +138,7 @@ describe('intake Worker hardening', () => {
   // applicant at the presign step. Nothing caught it, because the one role
   // anybody tested was the one that was registered. If a slug here fails, the
   // public page is advertising a role the Worker will turn away.
-  it.each(['full-stack-developer'])(
+  it.each(['full-stack-developer', 'relationship-growth-manager', 'content-creator-intern'])(
     'accepts upload preparation for advertised role %s',
     async (roleSlug) => {
       vi.setSystemTime(new Date('2026-09-16T12:00:00.000Z'))
@@ -169,7 +169,7 @@ describe('intake Worker hardening', () => {
   // still advertises has passed its closingDate, and that is exactly the moment
   // somebody needs to decide whether to extend the date or take the form down.
   // Failing the build is the intended behaviour, not a flake to pin to a date.
-  it.each(['full-stack-developer'])(
+  it.each(['full-stack-developer', 'relationship-growth-manager', 'content-creator-intern'])(
     'still accepts advertised role %s at the current date',
     async (roleSlug) => {
       vi.useRealTimers()

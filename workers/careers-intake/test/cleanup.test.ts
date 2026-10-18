@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { cleanupExpiredApplications } from '../src/index'
+import { addDaysUtc, RETENTION_DAYS_AFTER_ROLE_CLOSE } from '../src/security'
 
 type StoredObject = { key: string; body: unknown }
 
@@ -49,7 +50,10 @@ describe('scheduled retention cleanup', () => {
 
     const deleted = await cleanupExpiredApplications(
       { CAREERS_BUCKET: bucket } as never,
-      new Date('2026-07-30T00:00:00Z'),
+      // One day past the retention period for the 2026-07-01 role. Derived from the
+      // constant rather than hard-coded, so changing the retention period cannot leave
+      // this test asserting a window we no longer use.
+      addDaysUtc('2026-07-01', RETENTION_DAYS_AFTER_ROLE_CLOSE + 1),
     )
 
     expect(deleted).toBe(1)
@@ -57,5 +61,54 @@ describe('scheduled retention cleanup', () => {
     expect(bucket.deleted).toContain('applications/expired/resume.pdf')
     expect(bucket.objects.has('applications/open-long/metadata.json')).toBe(true)
     expect(bucket.objects.has('applications/open-long/resume.pdf')).toBe(true)
+  })
+
+  // Roles advertised "reviewed on a rolling basis" have no closing date, so there
+  // is nothing for retention to count from. The cron skips any application whose
+  // anchor is missing, which means an open-ended role would have kept the CV and
+  // intro video forever while the privacy policy promised deletion. Those
+  // applications anchor on the day they were submitted instead.
+  it('deletes an open-ended role application from its submission date', async () => {
+    const bucket = new FakeBucket()
+    bucket.seed('applications/rolling/metadata.json', {
+      appId: 'rolling',
+      roleCloseDate: null,
+      retentionAnchorDate: '2026-10-18',
+    })
+    bucket.seed('applications/rolling/resume.pdf', 'pdf')
+
+    const stillInside = await cleanupExpiredApplications(
+      { CAREERS_BUCKET: bucket } as never,
+      addDaysUtc('2026-10-18', RETENTION_DAYS_AFTER_ROLE_CLOSE - 1),
+    )
+    expect(stillInside).toBe(0)
+    expect(bucket.objects.has('applications/rolling/resume.pdf')).toBe(true)
+
+    const deleted = await cleanupExpiredApplications(
+      { CAREERS_BUCKET: bucket } as never,
+      addDaysUtc('2026-10-18', RETENTION_DAYS_AFTER_ROLE_CLOSE + 1),
+    )
+    expect(deleted).toBe(1)
+    expect(bucket.deleted).toContain('applications/rolling/resume.pdf')
+  })
+
+  // Pins the fail-safe, and the reason it is survivable. An application with no
+  // anchor at all is never deleted — the cron skips it silently, forever. That is
+  // the right call for data whose provenance is unknown, but it is only safe
+  // because the write path now always sets retentionAnchorDate. If this ever
+  // becomes reachable for new applications, it is an indefinite-retention bug,
+  // not a quirk: the whole point of the anchor is that this case cannot occur.
+  it('keeps, rather than deletes, an application with no anchor at all', async () => {
+    const bucket = new FakeBucket()
+    bucket.seed('applications/anchorless/metadata.json', { appId: 'anchorless', roleCloseDate: null })
+    bucket.seed('applications/anchorless/resume.pdf', 'pdf')
+
+    const deleted = await cleanupExpiredApplications(
+      { CAREERS_BUCKET: bucket } as never,
+      addDaysUtc('2026-10-18', RETENTION_DAYS_AFTER_ROLE_CLOSE * 5),
+    )
+
+    expect(deleted).toBe(0)
+    expect(bucket.objects.has('applications/anchorless/resume.pdf')).toBe(true)
   })
 })

@@ -11,7 +11,14 @@ export type ValidationResult = { ok: true } | { ok: false; error: string }
 
 export const RESUME_MAX_BYTES = 10 * 1024 * 1024
 export const VIDEO_MAX_BYTES = 100 * 1024 * 1024
-export const RETENTION_DAYS_AFTER_ROLE_CLOSE = 28
+// This number is a promise we make in public, not a tuning knob. The same period is
+// stated on the application form and in the privacy policy, so it can only be changed
+// in the same commit as those two texts — otherwise we keep candidate CVs and videos
+// longer than we told the candidate we would. Raised from 28 days to 12 months on
+// 2026-09-17 on Mitchell's instruction, to keep applicants on file for future roles.
+// Public copy carrying the same period: components/sections/career/ApplicationForm.tsx
+// (ngh-website-2026) and app/privacy-policy/page.tsx (this repo).
+export const RETENTION_DAYS_AFTER_ROLE_CLOSE = 365
 
 const resumeExtensions = ['.pdf', '.doc', '.docx']
 const videoExtensions = ['.mp4', '.mov', '.webm']

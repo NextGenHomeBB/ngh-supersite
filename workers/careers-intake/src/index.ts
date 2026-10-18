@@ -96,10 +96,18 @@ async function refExistsForActiveRole(env: Env, roleSlug: string, ref: string, n
     for (const object of metadataJsons) {
       const metadataObject = await env.CAREERS_BUCKET.get(object.key)
       if (!metadataObject) continue
-      const metadata = (await metadataObject.json()) as { ref?: string; roleSlug?: string; roleCloseDate?: string }
-      if (metadata.ref === ref && metadata.roleSlug === roleSlug && !isApplicationExpired(metadata.roleCloseDate || '', now)) {
-        return true
+      const metadata = (await metadataObject.json()) as {
+        ref?: string
+        roleSlug?: string
+        roleCloseDate?: string
+        retentionAnchorDate?: string
       }
+      if (metadata.ref !== ref || metadata.roleSlug !== roleSlug) continue
+      // Same anchor as the cleanup cron, so "still on file" here and "not yet
+      // deleted" there can never disagree. An application with no anchor at all
+      // is never deleted, so it still counts as present.
+      const anchor = metadata.retentionAnchorDate || metadata.roleCloseDate
+      if (!anchor || !isApplicationExpired(anchor, now)) return true
     }
     cursor = listed.truncated ? listed.cursor : undefined
   } while (cursor)
@@ -195,10 +203,17 @@ function isSessionExpired(createdAt: string, now = new Date()) {
 // open here after the vacancy is withdrawn keeps accepting CVs and intro videos
 // for a job that no longer exists. Removing the role from rolesData.ts is half the
 // change; the other half is here.
-type ResolvedRole = { slug: string; title: string; roleCode: string; closingDate: string }
+// closingDate null = open until the position is filled, which is what the site
+// means by "Applications reviewed on a rolling basis". There is no sentinel date
+// for this: a far-future closingDate would also push the deletion of the
+// applicant's CV and intro video that far out, because retention counts from it.
+// See retentionAnchorDate where the metadata is written.
+type ResolvedRole = { slug: string; title: string; roleCode: string; closingDate: string | null }
 
 const OPEN_ROLES: ResolvedRole[] = [
-  { slug: 'full-stack-developer', title: 'Junior Full-Stack Developer', roleCode: 'JFD', closingDate: '2026-10-31' },
+  { slug: 'full-stack-developer', title: 'Junior Full-Stack Developer', roleCode: 'JFD', closingDate: null },
+  { slug: 'relationship-growth-manager', title: 'Relationship & Growth Manager', roleCode: 'RGM', closingDate: null },
+  { slug: 'content-creator-intern', title: 'Content Creator Intern', roleCode: 'CCI', closingDate: null },
 ]
 
 function todayInBali(now = new Date()) {
@@ -209,6 +224,7 @@ function todayInBali(now = new Date()) {
 function resolveRole(roleSlug: string, now = new Date()): ResolvedRole | null {
   const registered = OPEN_ROLES.find((role) => role.slug === roleSlug)
   if (registered) {
+    if (registered.closingDate === null) return registered
     return registered.closingDate >= todayInBali(now) ? registered : null
   }
   const legacy = getCareerRole(roleSlug)
@@ -415,6 +431,13 @@ async function handleFinalize(request: Request, env: Env) {
     videoKey: finalUploads.find((upload) => upload.kind === 'introVideo')?.key,
     createdAt: new Date().toISOString(),
     roleCloseDate: role.closingDate,
+    // Retention is measured from here, never from roleCloseDate directly. A role
+    // with no closing date has nothing to count from, and the cleanup cron skips
+    // any application whose anchor is missing — so without this an open-ended
+    // role would keep the applicant's CV and intro video forever, silently, in
+    // flat contradiction of the privacy policy. For those roles the clock starts
+    // the day they applied.
+    retentionAnchorDate: role.closingDate ?? todayInBali(),
   }
   await env.CAREERS_BUCKET.put(`applications/${appId}/metadata.json`, JSON.stringify(metadata, null, 2), {
     httpMetadata: { contentType: 'application/json' },
@@ -535,9 +558,12 @@ async function cleanupExpiredApplications(env: Env, now = new Date()) {
     for (const object of metadataJsons) {
       const metadataObject = await env.CAREERS_BUCKET.get(object.key)
       if (!metadataObject) continue
-      const metadata = (await metadataObject.json()) as { roleCloseDate?: string }
+      const metadata = (await metadataObject.json()) as { roleCloseDate?: string; retentionAnchorDate?: string }
       const prefix = object.key.slice(0, object.key.length - 'metadata.json'.length)
-      if (metadata.roleCloseDate && isApplicationExpired(metadata.roleCloseDate, now)) {
+      // Applications stored before retentionAnchorDate existed only have
+      // roleCloseDate, and every one of those came from a role that had a date.
+      const anchor = metadata.retentionAnchorDate || metadata.roleCloseDate
+      if (anchor && isApplicationExpired(anchor, now)) {
         await deletePrefix(env.CAREERS_BUCKET, prefix)
         deleted += 1
       }
