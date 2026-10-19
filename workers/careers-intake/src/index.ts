@@ -214,6 +214,7 @@ const OPEN_ROLES: ResolvedRole[] = [
   { slug: 'full-stack-developer', title: 'Junior Full-Stack Developer', roleCode: 'JFD', closingDate: null },
   { slug: 'relationship-growth-manager', title: 'Relationship & Growth Manager', roleCode: 'RGM', closingDate: null },
   { slug: 'content-creator-intern', title: 'Content Creator Intern', roleCode: 'CCI', closingDate: null },
+  { slug: 'marketing-assistant-intern', title: 'Marketing Assistant Intern', roleCode: 'MAI', closingDate: null },
 ]
 
 function todayInBali(now = new Date()) {
