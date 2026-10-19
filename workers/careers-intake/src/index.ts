@@ -208,12 +208,22 @@ function isSessionExpired(createdAt: string, now = new Date()) {
 // for this: a far-future closingDate would also push the deletion of the
 // applicant's CV and intro video that far out, because retention counts from it.
 // See retentionAnchorDate where the metadata is written.
+//
+// Third recurrence, 2026-10-19: Gilbert reported the Marketing Assistant Intern
+// form could not be submitted. `marketing-assistant-intern` had been added to
+// rolesData.ts and was live on the site, unregistered here. Adding the line is
+// the fix; the list below is still the thing that drifts. The site publishes the
+// authoritative set at /sitemap.xml (ROLES filtered on applicationStatus !==
+// "closed"), so `npm run check:career-roles` now diffs that manifest against
+// what this Worker actually accepts, in both directions. Run it after any
+// vacancy change on either side.
 type ResolvedRole = { slug: string; title: string; roleCode: string; closingDate: string | null }
 
 const OPEN_ROLES: ResolvedRole[] = [
-  { slug: 'full-stack-developer', title: 'Junior Full-Stack Developer', roleCode: 'JFD', closingDate: null },
+  { slug: 'full-stack-developer', title: 'Full-Stack Developer', roleCode: 'JFD', closingDate: null },
   { slug: 'relationship-growth-manager', title: 'Relationship & Growth Manager', roleCode: 'RGM', closingDate: null },
   { slug: 'content-creator-intern', title: 'Content Creator Intern', roleCode: 'CCI', closingDate: null },
+  { slug: 'marketing-assistant-intern', title: 'Marketing Assistant Intern', roleCode: 'MAI', closingDate: null },
 ]
 
 function todayInBali(now = new Date()) {

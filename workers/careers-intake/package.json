@@ -7,7 +7,8 @@
     "build": "tsc --noEmit",
     "test": "vitest run",
     "dev": "wrangler dev src/index.ts --local",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "check:career-roles": "node scripts/check-career-roles.mjs"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260701.0",
