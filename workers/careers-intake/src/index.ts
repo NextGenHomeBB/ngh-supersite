@@ -366,13 +366,14 @@ async function sendTelegram(env: Env, metadata: {
   appId: string
   role: string
   ref: string
+  applicantName: string
 }) {
   if (!env.TELEGRAM_NOTIFY_BOT_TOKEN || !env.TELEGRAM_NOTIFY_CHAT_ID) {
     console.info('Telegram test mode: notification skipped')
     return
   }
   const text = [
-    `New ${metadata.role} application · Ref ${metadata.ref}`,
+    `New ${metadata.role} application · ${metadata.applicantName} · Ref ${metadata.ref}`,
     `CV link: ${applicantLink(metadata.appId, 'cv')}`,
     `Video link: ${applicantLink(metadata.appId, 'video')}`,
   ].join('\n')

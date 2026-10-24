@@ -445,12 +445,11 @@ describe('intake Worker hardening', () => {
     expect(metadata.videoUrl).toContain(videoKey)
 
     const telegram = calls.find((call) => call.url.includes('api.telegram.org'))?.body as { text: string }
-    expect(telegram.text).toContain('New Operations & Planning Manager application · Ref OPM-BBBB')
+    expect(telegram.text).toContain('New Operations & Planning Manager application · Jane Candidate · Ref OPM-BBBB')
     expect(telegram.text).toContain(`CV link: https://apply.nghpropertygroup.com/applicants/${appId}/cv`)
     expect(telegram.text).toContain(`Video link: https://apply.nghpropertygroup.com/applicants/${appId}/video`)
     expect(telegram.text).not.toContain('Application ID:')
     expect(telegram.text).not.toContain('OPM-AAAA')
-    expect(telegram.text).not.toContain('Jane Candidate')
     expect(telegram.text).not.toContain('jane@example.com')
     expect(telegram.text).not.toContain('+62 812')
     expect(telegram.text).not.toContain('1991-02-03')
