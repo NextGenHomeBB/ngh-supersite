@@ -461,6 +461,56 @@ describe('intake Worker hardening', () => {
     expect(telegram.text).not.toContain('Submitted:')
   })
 
+  it('still accepts the application when the Telegram ping is rejected', async () => {
+    const bucket = new FakeBucket()
+    bucket.seedJson(`applications/${appId}/session.json`, {
+      appId,
+      roleSlug: 'operations-planning-manager',
+      createdAt: new Date().toISOString(),
+      uploads: [
+        { kind: 'resume', fileName: 'candidate.pdf', size: 5, contentType: 'application/pdf', key: resumeKey },
+        { kind: 'introVideo', fileName: 'candidate.mp4', size: 12, contentType: 'video/mp4', key: videoKey },
+      ],
+    })
+    bucket.seedFile(resumeKey, new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d]))
+    bucket.seedFile(videoKey, new Uint8Array([0x00, 0x00, 0x00, 0x18, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d]))
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(
+      JSON.stringify({ ok: false, error_code: 400, description: 'Bad Request: chat not found' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } },
+    )))
+    const errors = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    const response = await worker.fetch(
+      jsonRequest('/applications', {
+        appId,
+        roleSlug: 'operations-planning-manager',
+        consentAccepted: true,
+        candidate: { name: 'Jane Candidate', dateOfBirth: '1991-02-03', email: 'jane@example.com', phone: '+62 812', location: 'Bali' },
+        answers: validAnswers(),
+        uploads: [
+          { kind: 'resume', key: resumeKey, fileName: 'ignored.pdf', size: 5, contentType: 'application/pdf' },
+          { kind: 'introVideo', key: videoKey, fileName: 'ignored.mp4', size: 12, contentType: 'video/mp4' },
+        ],
+      }),
+      {
+        ...testEnv(bucket),
+        TELEGRAM_NOTIFY_BOT_TOKEN: 'test-telegram-token',
+        TELEGRAM_NOTIFY_CHAT_ID: 'sandbox-group',
+      } as never,
+    )
+
+    expect(response.status).toBe(200)
+    const body = await response.json() as { ok: boolean; ref: string }
+    expect(body.ok).toBe(true)
+    expect(bucket.objects.has(`applications/${appId}/metadata.json`)).toBe(true)
+    const logged = errors.mock.calls.map((call) => call.join(' ')).join('\n')
+    expect(logged).toContain('chat not found')
+    expect(logged).toContain(body.ref)
+    expect(logged).not.toContain('test-telegram-token')
+    expect(logged).not.toContain('Jane Candidate')
+    expect(logged).not.toContain('jane@example.com')
+  })
+
   it('streams private CV and video objects through durable applicant routes', async () => {
     const bucket = new FakeBucket()
     const videoBytes = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
