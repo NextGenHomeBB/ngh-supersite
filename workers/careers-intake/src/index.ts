@@ -377,12 +377,24 @@ async function sendTelegram(env: Env, metadata: {
     `CV link: ${applicantLink(metadata.appId, 'cv')}`,
     `Video link: ${applicantLink(metadata.appId, 'video')}`,
   ].join('\n')
-  const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_NOTIFY_BOT_TOKEN}/sendMessage`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: env.TELEGRAM_NOTIFY_CHAT_ID, text, disable_web_page_preview: true }),
-  })
-  if (!response.ok) throw new Error('Telegram notification failed.')
+  // The ping is secondary: by the time it runs the application is already in
+  // R2. A failure here must never reach the applicant — a 500 after a saved
+  // application made people submit again and again, each retry a new ref. Log
+  // Telegram's own reason (never the token, never the applicant) and move on.
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_NOTIFY_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: env.TELEGRAM_NOTIFY_CHAT_ID, text, disable_web_page_preview: true }),
+    })
+    if (response.ok) return
+    const detail = await response.json().catch(() => null) as { description?: string } | null
+    console.error(`Telegram notification failed for ref ${metadata.ref}: HTTP ${response.status} ${detail?.description ?? ''}`.trim())
+  } catch (error) {
+    // A fetch error can echo the request URL, and the token is in the path.
+    const reason = error instanceof Error ? error.message.replaceAll(env.TELEGRAM_NOTIFY_BOT_TOKEN, '[token]') : 'network error'
+    console.error(`Telegram notification failed for ref ${metadata.ref}: ${reason}`)
+  }
 }
 
 async function handleFinalize(request: Request, env: Env) {
